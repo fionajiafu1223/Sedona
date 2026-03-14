@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圣多纳释放法 · 内心疗愈</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow: hidden; position: relative;
+    background: linear-gradient(180deg, #cce8f8 0%, #96caf0 38%, #5aaade 52%, #2a72b8 100%);
+  }
+
+  /* ── SKY CLOUDS ── */
+  .sky-clouds {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 1;
+    overflow: hidden;
+  }
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.72);
+    border-radius: 50px;
+    animation: driftCloud linear infinite;
+    filter: blur(1px);
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: rgba(255,255,255,0.72);
+    border-radius: 50%;
+  }
+  .cloud::before { width: 55%; height: 140%; top: -35%; left: 15%; }
+  .cloud::after  { width: 40%; height: 120%; top: -25%; left: 50%; }
+  @keyframes driftCloud {
+    from { transform: translateX(-200px); }
+    to   { transform: translateX(calc(100vw + 200px)); }
+  }
+
+  /* underwater rays removed */
+
+  /* ── HEADER ── */
+  .header {
+    position: relative; z-index: 20;
+    text-align: center;
+    padding: 18px 20px 4px;
+  }
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.36rem; font-weight: 300;
+    color: #fff; letter-spacing: 0.18em;
+    text-shadow: 0 1px 8px rgba(0,60,120,0.4);
+  }
+  .header p {
+    font-size: 0.71rem; color: rgba(220,240,255,0.9);
+    margin-top: 3px; letter-spacing: 0.1em; font-weight: 300;
+  }
+
+  /* ── WATER SURFACE SVG ── */
+  .water-surface {
+    position: fixed; left: 0; width: 100%;
+    pointer-events: none; z-index: 10;
+  }
+
+  /* ── BUBBLE SCENE ── */
+  .scene {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 8;
+    overflow: hidden;
+  }
+
+  /* ── BUBBLES ── */
+  .bubble {
+    position: fixed;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 400;
+    color: rgba(255,255,255,0.92);
+    cursor: pointer;
+    border: 2px solid rgba(180,230,255,0.7);
+    background: radial-gradient(circle at 32% 28%, rgba(200,230,255,0.55), rgba(60,120,220,0.38));
+    box-shadow: 0 2px 12px rgba(0,60,160,0.28), inset 0 1px 0 rgba(255,255,255,0.38);
+    backdrop-filter: blur(3px);
+    text-shadow: 0 1px 6px rgba(0,30,80,0.6);
+    color: rgba(255,255,255,1);
+    user-select: none;
+    white-space: pre-line;
+    line-height: 1.35;
+  }
+  .bubble.idle:hover { filter: brightness(1.18); transform: scale(1.06); animation-play-state: paused; }
+  .bubble.idle:active { transform: scale(0.93); }
+
+  .bubble.idle.bc {
+    background: radial-gradient(circle at 35% 30%, rgba(255,192,210,0.58), rgba(187,46,77,0.38));
+    border: 1.5px solid rgba(246,134,160,0.68);
+    box-shadow: 0 0 14px 5px rgba(192,51,82,0.22), 0 0 36px 12px rgba(192,51,82,0.09), inset 0 1px 0 rgba(255,248,252,0.35);
+    color: rgba(255,240,245,0.92);
+    text-shadow: 0 1px 5px rgba(55,0,14,0.55);
+  }
+  .bubble.idle.ba {
+    background: radial-gradient(circle at 35% 30%, rgba(153,251,200,0.58), rgba(20,122,65,0.38));
+    border: 1.5px solid rgba(87,198,134,0.68);
+    box-shadow: 0 0 14px 5px rgba(24,134,73,0.22), 0 0 36px 12px rgba(24,134,73,0.09), inset 0 1px 0 rgba(234,255,244,0.35);
+    color: rgba(238,255,245,0.92);
+    text-shadow: 0 1px 5px rgba(0,35,12,0.55);
+  }
+  .bubble.idle.bs {
+    background: radial-gradient(circle at 35% 30%, rgba(161,202,255,0.58), rgba(38,69,207,0.38));
+    border: 1.5px solid rgba(104,150,255,0.68);
+    box-shadow: 0 0 14px 5px rgba(43,74,219,0.22), 0 0 36px 12px rgba(43,74,219,0.09), inset 0 1px 0 rgba(240,245,255,0.35);
+    color: rgba(238,244,255,0.92);
+    text-shadow: 0 1px 5px rgba(0,8,50,0.55);
+  }
+
+  /* 光晕脉动动画 */
+  @keyframes auraPulse {
+    0%   { box-shadow: 0 0 10px 3px var(--aura), 0 0 28px 8px var(--aura-far), inset 0 1px 0 rgba(255,255,255,0.35); }
+    50%  { box-shadow: 0 0 20px 8px var(--aura), 0 0 48px 16px var(--aura-far), inset 0 1px 0 rgba(255,255,255,0.35); }
+    100% { box-shadow: 0 0 10px 3px var(--aura), 0 0 28px 8px var(--aura-far), inset 0 1px 0 rgba(255,255,255,0.35); }
+  }
+  .bubble.idle.bc { --aura: rgba(145,38,62,0.22); --aura-far: rgba(145,38,62,0.09); animation: auraPulse 3.2s ease-in-out infinite; }
+  .bubble.idle.ba { --aura: rgba(18,100,55,0.22); --aura-far: rgba(18,100,55,0.09); animation: auraPulse 3.6s ease-in-out infinite; }
+  .bubble.idle.bs { --aura: rgba(32,56,165,0.22); --aura-far: rgba(32,56,165,0.09); animation: auraPulse 4.0s ease-in-out infinite; }
+
+  .bubble.idle { animation: none; }
+  .bubble.rising { cursor: default; z-index: 12; pointer-events: none; }
+
+  .bubble.at-surface {
+    cursor: default; z-index: 15; pointer-events: none;
+    background: radial-gradient(circle at 34% 28%, rgba(255,255,255,0.9), rgba(180,230,255,0.6)) !important;
+    border: 2px solid rgba(255,255,255,0.85) !important;
+    box-shadow: 0 6px 28px rgba(0,100,200,0.28), inset 0 2px 0 rgba(255,255,255,0.7) !important;
+    color: #0e2840 !important;
+    text-shadow: none !important;
+    backdrop-filter: blur(6px);
+  }
+  .bubble.at-surface.bc { background: radial-gradient(circle at 34% 28%, rgba(255,230,235,0.95), rgba(240,130,155,0.65)) !important; color: #3a0a18 !important; }
+  .bubble.at-surface.ba { background: radial-gradient(circle at 34% 28%, rgba(220,255,235,0.95), rgba(80,190,130,0.65)) !important; color: #063020 !important; }
+  .bubble.at-surface.bs { background: radial-gradient(circle at 34% 28%, rgba(225,235,255,0.95), rgba(100,140,240,0.65)) !important; color: #080e38 !important; }
+
+  .surf-btn {
+    position: fixed; z-index: 16;
+    width: 62px; height: 62px; border-radius: 50%; border: none;
+    font-family: 'Noto Serif SC', serif; font-size: 0.74rem; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; line-height: 1.3;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.15s ease;
+  }
+  .surf-btn.show { opacity: 1; pointer-events: auto; }
+  .surf-btn:hover { transform: scale(1.12); }
+  .surf-btn:active { transform: scale(0.9); }
+  .surf-deny  {
+    background: radial-gradient(circle at 36% 30%, rgba(255,255,255,0.96), rgba(200,230,255,0.9));
+    color: #0e2840;
+    border: 1.5px solid rgba(100,160,220,0.5);
+    box-shadow: 0 3px 14px rgba(80,140,220,0.28);
+  }
+  .surf-allow {
+    background: radial-gradient(circle at 36% 30%, #fde87a, #e8a818);
+    color: #2a1200;
+    box-shadow: 0 3px 18px rgba(240,165,28,0.55);
+  }
+
+  .bubble.at-surface.bm {
+    background: radial-gradient(circle at 34% 28%, rgba(235,240,255,0.95), rgba(160,120,220,0.7)) !important;
+    border: 2px solid rgba(200,180,255,0.85) !important;
+    color: #1a0a38 !important;
+  }
+  .bubble.at-surface.bm3 {
+    background: radial-gradient(circle at 34% 28%, rgba(255,240,220,0.95), rgba(180,130,80,0.65)) !important;
+    border: 2px solid rgba(255,210,140,0.85) !important;
+    color: #2a1400 !important;
+  }
+
+  @keyframes escapeToSky {
+    0%   { opacity: 1;   transform: translateY(0)     scale(1); }
+    15%  { opacity: 0.95; transform: translateY(-50px)  scale(1.06); }
+    55%  { opacity: 0.5;  transform: translateY(-180px) scale(0.74); }
+    100% { opacity: 0;   transform: translateY(-400px) scale(0.08); }
+  }
+  .go-sky {
+    animation: escapeToSky 1.9s cubic-bezier(0.22,0.58,0.38,0.96) forwards !important;
+    pointer-events: none !important;
+    z-index: 18 !important;
+  }
+
+  /* Underwater ambient particles */
+  .uw-particle {
+    position: absolute; border-radius: 50%;
+    background: rgba(140,210,255,0.2);
+    animation: uwFloat linear infinite;
+    pointer-events: none;
+  }
+  @keyframes uwFloat {
+    0%   { transform: translateY(0); opacity: 0; }
+    10%  { opacity: 0.5; }
+    90%  { opacity: 0.12; }
+    100% { transform: translateY(-60vh); opacity: 0; }
+  }
+
+  .toast {
+    position: fixed; bottom: 58px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+    color: #0e2840; padding: 9px 24px; border-radius: 40px;
+    font-family: 'Noto Serif SC', serif; font-size: 0.84rem; letter-spacing: 0.04em;
+    opacity: 0; transition: all 0.38s ease; pointer-events: none; z-index: 200;
+    white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .instruction {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    font-family: 'Noto Serif SC', serif; font-size: 0.72rem;
+    color: rgba(220,240,255,0.75); letter-spacing: 0.06em;
+    text-shadow: 0 1px 4px rgba(0,40,100,0.4);
+    text-align: center; white-space: nowrap;
+  }
+  .counter {
+    position: fixed; bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    font-family: 'Noto Serif SC', serif; font-size: 0.65rem;
+    color: rgba(180,220,255,0.6); letter-spacing: 0.1em;
+    text-shadow: 0 1px 4px rgba(0,40,60,0.4);
+  }
+
+  /* ── GAIN BOOK ── */
+  .gain-book-btn {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.22); backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(180,220,255,0.5); color: #1a4a7a;
+    font-size: 1.25rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 14px rgba(0,40,100,0.12);
+    transition: transform 0.2s, background 0.2s;
+  }
+  .gain-book-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.35); }
+
+  .gain-panel-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,30,60,0.45); backdrop-filter: blur(4px);
+    z-index: 200; display: none;
+    align-items: center; justify-content: center;
+  }
+  .gain-panel-overlay.open { display: flex; }
+
+  .gain-panel {
+    background: linear-gradient(145deg, rgba(240,250,255,0.97), rgba(220,238,255,0.95));
+    border-radius: 20px; padding: 20px 18px 20px;
+    width: min(420px, 94vw); max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 12px 48px rgba(0,40,100,0.22);
+    font-family: 'Noto Serif SC', serif; position: relative;
+  }
+  .gain-panel h2 {
+    font-size: 1rem; font-weight: 600; color: #0e3050;
+    letter-spacing: 0.1em; margin-bottom: 3px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .gain-panel .subtitle {
+    font-size: 0.66rem; color: #5a7aa0; letter-spacing: 0.04em;
+    margin-bottom: 14px; font-family: 'Noto Sans SC', sans-serif;
+  }
+  .gain-input-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .gain-input-row input {
+    flex: 1; padding: 9px 14px;
+    border: 1.5px solid rgba(100,160,220,0.4); border-radius: 12px;
+    background: rgba(255,255,255,0.7);
+    font-family: 'Noto Sans SC', sans-serif; font-size: 0.88rem; color: #0e2840;
+    outline: none; transition: border-color 0.2s;
+  }
+  .gain-input-row input:focus { border-color: rgba(80,140,220,0.8); }
+  .gain-input-row button {
+    padding: 9px 16px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #4a9fd4, #2a7abf); color: #fff;
+    font-family: 'Noto Serif SC', serif; font-size: 0.84rem;
+    cursor: pointer; white-space: nowrap;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .gain-input-row button:hover { opacity: 0.88; transform: scale(1.04); }
+  .gain-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .gain-cat {
+    padding: 4px 10px; border-radius: 20px;
+    border: 1.5px solid rgba(100,160,220,0.4);
+    background: rgba(255,255,255,0.55);
+    font-family: 'Noto Sans SC', sans-serif; font-size: 0.72rem;
+    color: #2a5080; cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .gain-cat:hover { background: rgba(200,230,255,0.7); }
+  .gain-cat.active {
+    background: linear-gradient(135deg, rgba(74,159,212,0.85), rgba(42,122,191,0.85));
+    border-color: rgba(74,159,212,0.6); color: #fff;
+  }
+  .gain-filter-row {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 14px;
+  }
+  .gain-filter-label { font-size: 0.72rem; color: #5a7aa0; font-family: 'Noto Sans SC', sans-serif; }
+  .gain-filter {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1.5px solid rgba(100,160,220,0.4);
+    background: rgba(255,255,255,0.55);
+    font-size: 0.9rem; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.18s ease;
+  }
+  .gain-filter[data-filter="all"] { width: auto; padding: 0 10px; font-size: 0.72rem; font-family: 'Noto Sans SC', sans-serif; color: #5a7aa0; }
+  .gain-filter:hover { background: rgba(200,230,255,0.7); }
+  .gain-filter.active {
+    background: linear-gradient(135deg, rgba(74,159,212,0.85), rgba(42,122,191,0.85));
+    border-color: rgba(74,159,212,0.6); color: #fff;
+  }
+  .gain-section-title {
+    font-size: 0.78rem; color: #2a5080; letter-spacing: 0.08em;
+    margin: 14px 0 8px; font-weight: 600;
+  }
+  .gain-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .gain-item {
+    background: rgba(255,255,255,0.62); border-radius: 12px;
+    padding: 10px 14px; border: 1px solid rgba(100,160,220,0.2);
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .gain-item.shared { background: rgba(230,245,255,0.62); }
+  .gain-text { font-size: 0.84rem; color: #0e2840; line-height: 1.5; }
+  .gain-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(74,159,212,0.15); border-radius: 10px;
+    padding: 2px 8px; font-size: 0.68rem; color: #2a6090;
+    font-family: 'Noto Sans SC', sans-serif; align-self: flex-start;
+  }
+  .gain-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 2px;
+  }
+  .gain-meta { font-size: 0.64rem; color: #7a9ab0; font-family: 'Noto Sans SC', sans-serif; }
+  .gain-like-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: none; border: 1px solid rgba(100,160,220,0.25);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 0.7rem; color: #7a9ab0;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer; transition: all 0.18s ease;
+    line-height: 1;
+  }
+  .gain-like-btn:hover { background: rgba(255,100,130,0.08); border-color: rgba(255,100,130,0.4); color: #e05080; }
+  .gain-like-btn.liked { background: rgba(255,100,130,0.12); border-color: rgba(255,100,130,0.5); color: #e05080; }
+  .gain-like-count { font-weight: 600; }
+  .gain-sort-btn {
+    padding: 4px 10px; border-radius: 14px;
+    border: 1.5px solid rgba(100,160,220,0.35);
+    background: rgba(255,255,255,0.5);
+    font-size: 0.68rem; color: #5a7aa0;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer; transition: all 0.18s ease;
+  }
+  .gain-sort-btn:hover { background: rgba(200,230,255,0.7); }
+  .gain-sort-btn.active {
+    background: linear-gradient(135deg, rgba(74,159,212,0.85), rgba(42,122,191,0.85));
+    border-color: rgba(74,159,212,0.6); color: #fff;
+  }
+  .gain-loading { font-size: 0.78rem; color: #8aaac0; text-align: center; padding: 10px 0; }
+  .gain-close-btn {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; font-size: 1.1rem;
+    color: #5a7aa0; cursor: pointer; line-height: 1;
+    transition: color 0.15s, transform 0.15s;
+  }
+  .gain-close-btn:hover { color: #0e2840; transform: scale(1.2); }
+</style>
+</head>
+<body>
+
+<!-- Sky layer -->
+<div class="sky-clouds" id="skyClouds"></div>
+
+<!-- Header in sky -->
+<div class="header">
+  <h1>圣多纳释放法</h1>
+  <p>觉察 · 允许 · 释放</p>
+</div>
+
+<!-- Water surface SVG (animated waves) -->
+<svg class="water-surface" id="waterSvg" xmlns="http://www.w3.org/2000/svg"
+     style="position:fixed;left:0;width:100%;pointer-events:none;z-index:10;">
+  <defs>
+    <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(30,130,200,0.85)"/>
+      <stop offset="8%" stop-color="rgba(20,94,148,0)"/>
+    </linearGradient>
+  </defs>
+  <path id="wavePath" fill="url(#waveGrad)" opacity="0.95"/>
+  <path id="wavePath2" fill="rgba(60,160,230,0.3)" opacity="0.6"/>
+</svg>
+
+<!-- Bubble scene layer -->
+<div class="scene" id="scene"></div>
+
+<!-- Single shared decision button pair -->
+<button class="surf-btn surf-deny"  id="sharedDeny"  onclick="handleDecision(false)" style="z-index:16;">不允许</button>
+<button class="surf-btn surf-allow" id="sharedAllow" onclick="handleDecision(true)"  style="z-index:16;">允许</button>
+
+<div class="instruction" id="instr">点击水下的欲望泡泡，让它浮上水面（最多同时3个）</div>
+<div class="counter"     id="counter">已释放 0 个欲望</div>
+<div class="toast"       id="toast"></div>
+
+<!-- Gain Book Button -->
+<button class="gain-book-btn" onclick="openGainBook()" title="Gain Book · 收获记录">📖</button>
+
+<!-- Gain Book Panel -->
+<div class="gain-panel-overlay" id="gainOverlay" onclick="closeGainBookOverlay(event)">
+  <div class="gain-panel">
+    <button class="gain-close-btn" onclick="closeGainBook()">✕</button>
+    <h2>📖 Gain Book</h2>
+    <p class="subtitle">记录每一次释放后的收获与领悟，与所有人共享</p>
+    <div class="gain-cats" id="gainCats">
+      <button class="gain-cat active" data-cat="健康" onclick="selectCat(this)">🌿 健康</button>
+      <button class="gain-cat" data-cat="财富" onclick="selectCat(this)">💰 财富</button>
+      <button class="gain-cat" data-cat="SP" onclick="selectCat(this)">💞 SP</button>
+      <button class="gain-cat" data-cat="人际关系" onclick="selectCat(this)">🤝 人际关系</button>
+      <button class="gain-cat" data-cat="学业" onclick="selectCat(this)">📚 学业</button>
+      <button class="gain-cat" data-cat="其他" onclick="selectCat(this)">✨ 其他</button>
+    </div>
+    <div class="gain-input-row">
+      <input type="text" id="gainInput" placeholder="写下你释放后的收获…" maxlength="80" />
+      <button onclick="submitGain()">记录</button>
+    </div>
+    <div class="gain-filter-row">
+      <span class="gain-filter-label">筛选：</span>
+      <button class="gain-filter active" data-filter="all" onclick="selectFilter(this)">全部</button>
+      <button class="gain-filter" data-filter="健康" onclick="selectFilter(this)">🌿</button>
+      <button class="gain-filter" data-filter="财富" onclick="selectFilter(this)">💰</button>
+      <button class="gain-filter" data-filter="SP" onclick="selectFilter(this)">💞</button>
+      <button class="gain-filter" data-filter="人际关系" onclick="selectFilter(this)">🤝</button>
+      <button class="gain-filter" data-filter="学业" onclick="selectFilter(this)">📚</button>
+      <button class="gain-filter" data-filter="其他" onclick="selectFilter(this)">✨</button>
+    </div>
+    <div class="gain-section-title" id="myGainTitle">我的记录</div>
+    <ul class="gain-list" id="myGainList"><li class="gain-loading">加载中…</li></ul>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+      <div class="gain-section-title" id="sharedGainTitle" style="margin:0;">所有人的收获</div>
+      <div style="display:flex;gap:6px;">
+        <button class="gain-sort-btn active" id="sortLikes" onclick="setSort('likes')">❤️ 最多赞</button>
+        <button class="gain-sort-btn" id="sortTime" onclick="setSort('time')">🕐 最新</button>
+      </div>
+    </div>
+    <ul class="gain-list" id="sharedGainList"><li class="gain-loading">加载中…</li></ul>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════
+const DESIRES = [
+  { key:'control',  label:'想要\n控制', cls:'bc' },
+  { key:'approval', label:'想要被\n认同', cls:'ba' },
+  { key:'safety',   label:'想要\n安全', cls:'bs' },
+];
+const RISE_SPEED  = 240;
+const MAX_RISING  = 3;
+const WATER_Y_PCT = 0.52;
+const IDLE_COUNT  = Math.max(10, Math.min(22, Math.floor(
+  (window.innerWidth * window.innerHeight * (1 - WATER_Y_PCT)) / 12000
+)));
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let idleBubbles  = [];
+let risingSlots  = [null, null, null];
+let released     = 0;
+let physicsRaf   = null;
+let mergedBubble = null;
+
+// ═══════════════════════════════════════════════════
+//  LAYOUT
+// ═══════════════════════════════════════════════════
+function waterY() { return window.innerHeight * WATER_Y_PCT; }
+function vw()     { return window.innerWidth; }
+function vh()     { return window.innerHeight; }
+
+// ═══════════════════════════════════════════════════
+//  PHYSICS ENGINE
+// ═══════════════════════════════════════════════════
+const BUOYANCY    = 0.018;
+const DAMPING     = 0.88;
+const REPULSION   = 320;
+const WALL_REP    = 180;
+const WALL_MARGIN = 6;
+const DOM_EVERY   = 2;
+let   frameCount  = 0;
+
+function physicsTick() {
+  const wy = waterY();
+  const W  = vw();
+  const H  = vh();
+  const active = idleBubbles;
+
+  frameCount++;
+  const doDOM = (frameCount % DOM_EVERY === 0);
+
+  const CELL = 72;
+  const grid = new Map();
+  for (const b of active) {
+    const cx = (b.px / CELL) | 0;
+    const cy = (b.py / CELL) | 0;
+    const key = cx * 1000 + cy;
+    if (!grid.has(key)) grid.set(key, []);
+    grid.get(key).push(b);
+  }
+
+  for (const b of active) {
+    const r = b.sz / 2;
+    const depth = (b.py - wy) / (H - wy);
+    b.vy -= BUOYANCY * (0.3 + depth * 1.4);
+
+    const cx = (b.px / CELL) | 0;
+    const cy = (b.py / CELL) | 0;
+    for (let nx = cx - 1; nx <= cx + 1; nx++) {
+      for (let ny = cy - 1; ny <= cy + 1; ny++) {
+        const neighbours = grid.get(nx * 1000 + ny);
+        if (!neighbours) continue;
+        for (const o of neighbours) {
+          if (o === b) continue;
+          const dx = b.px - o.px;
+          const dy = b.py - o.py;
+          const dist2 = dx * dx + dy * dy;
+          const minDist = r + o.sz / 2 + 4;
+          if (dist2 < minDist * minDist && dist2 > 0.001) {
+            const dist = Math.sqrt(dist2);
+            const force = REPULSION * (minDist - dist) / (minDist * dist);
+            b.vx += dx * force;
+            b.vy += dy * force;
+          }
+        }
+      }
+    }
+
+    const left = r + WALL_MARGIN, right = W - r - WALL_MARGIN;
+    const top  = wy + r + 2,     bot   = H - r - WALL_MARGIN;
+    if (b.px < left  + 40) b.vx += WALL_REP / Math.max(1, b.px - left);
+    if (b.px > right - 40) b.vx -= WALL_REP / Math.max(1, right - b.px);
+    if (b.py < top   + 40) b.vy += WALL_REP * 2 / Math.max(1, b.py - top);
+    if (b.py > bot   - 40) b.vy -= WALL_REP / Math.max(1, bot - b.py);
+
+    b.vx *= DAMPING;
+    b.vy *= DAMPING;
+    const spd2 = b.vx * b.vx + b.vy * b.vy;
+    if (spd2 > 3.24) { const s = 1.8 / Math.sqrt(spd2); b.vx *= s; b.vy *= s; }
+
+    b.px += b.vx;
+    b.py += b.vy;
+    b.px = Math.max(left, Math.min(right, b.px));
+    b.py = Math.max(top,  Math.min(bot,   b.py));
+    if (b.py <= top && b.vy < 0) b.vy = 0;
+
+    if (doDOM) {
+      b.el.style.left = `${b.px - r}px`;
+      b.el.style.top  = `${b.py - r}px`;
+    }
+  }
+  physicsRaf = requestAnimationFrame(physicsTick);
+}
+
+// Place bubble avoiding overlap
+function placeInitial(sz, allBubbles) {
+  const wy = waterY();
+  const W  = vw();
+  const H  = vh();
+  const r  = sz / 2;
+  const pad = 5;
+
+  for (let attempt = 0; attempt < 200; attempt++) {
+    const tRand = Math.random();
+    const depth = tRand * tRand;
+    const py = wy + r + pad + depth * (H - wy - r * 2 - pad * 2);
+    const px = r + pad + Math.random() * (W - r * 2 - pad * 2);
+    let ok = true;
+    for (const b of allBubbles) {
+      if (Math.hypot(px - b.px, py - b.py) < r + b.sz / 2 + pad) { ok = false; break; }
+    }
+    if (ok) return { px, py };
+  }
+  const depth = Math.random() * Math.random();
+  return {
+    px: r + pad + Math.random() * (W - r * 2 - pad * 2),
+    py: wy + r + pad + depth * (H - wy - r * 2 - pad * 2),
+  };
+}
+
+// ═══════════════════════════════════════════════════
+//  SURFACE SLOT — all bubbles merge at center
+// ═══════════════════════════════════════════════════
+const TSZ = 88;
+
+function surfaceSlotPos() {
+  return { x: vw() * 0.50, y: waterY() - TSZ * 0.55 };
+}
+
+// ═══════════════════════════════════════════════════
+//  MERGE BUBBLE — all at-surface bubbles become one
+// ═══════════════════════════════════════════════════
+function tryMerge() {
+  const atSurface = risingSlots
+    .map((s, i) => s && s.el.classList.contains('at-surface') ? { ...s, idx: i } : null)
+    .filter(Boolean);
+
+  if (atSurface.length === 0) return;
+
+  if (mergedBubble) { mergedBubble.el.remove(); mergedBubble = null; }
+
+  const desires = atSurface.map(e => e.desire);
+
+  for (const e of atSurface) {
+    e.el.style.opacity = '0';
+    e.el.style.pointerEvents = 'none';
+  }
+
+  const count = desires.length;
+  const mSz = 92 + (count - 1) * 28;
+
+  const seen = new Set();
+  const lines = desires.map(d => d.label.replace('\n', '')).filter(l => !seen.has(l) && seen.add(l));
+  const labelHtml = lines.join('<br>');
+
+  const cls = count === 1 ? desires[0].cls
+    : count === 2 ? (desires[0].cls === desires[1].cls ? desires[0].cls : 'bm')
+    : 'bm3';
+
+  const wy = waterY();
+  const cx = vw() * 0.50;
+  const cy = wy - mSz * 0.55;
+
+  const el = document.createElement('div');
+  el.className = `bubble at-surface merged ${cls}`;
+  el.innerHTML = labelHtml;
+  el.style.cssText = `
+    width:${mSz}px; height:${mSz}px;
+    left:${cx - mSz/2}px; top:${cy - mSz/2}px;
+    font-size:${count > 1 ? 0.72 : 0.82}rem;
+    position:fixed; z-index:15;
+    opacity:0;
+    transition: opacity 0.4s ease;
+    pointer-events:none;
+  `;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity = '1'; }));
+
+  mergedBubble = { el, desires, sz: mSz, atSurface };
+  updateSharedButtons(cx, cy, mSz);
+}
+
+function updateSharedButtons(cx, cy, sz) {
+  const denyEl  = document.getElementById('sharedDeny');
+  const allowEl = document.getElementById('sharedAllow');
+  const gap = 16;
+  denyEl.style.left  = `${cx - sz/2 - 62 - gap}px`;
+  denyEl.style.top   = `${cy - 30}px`;
+  allowEl.style.left = `${cx + sz/2 + gap}px`;
+  allowEl.style.top  = `${cy - 30}px`;
+  denyEl.classList.add('show');
+  allowEl.classList.add('show');
+}
+
+// ═══════════════════════════════════════════════════
+//  ANIMATED WAVE SURFACE
+// ═══════════════════════════════════════════════════
+let waveOffset = 0;
+
+function drawWaves() {
+  const w    = vw();
+  const wy   = waterY();
+  const amp  = 10;
+  const amp2 = 6;
+  waveOffset += 0.012;
+
+  let d = `M 0 ${wy + amp}`;
+  for (let x = 0; x <= w; x += 6) {
+    const y = wy + Math.sin((x / w) * Math.PI * 4 + waveOffset) * amp
+                  + Math.sin((x / w) * Math.PI * 2.5 + waveOffset * 1.3) * (amp * 0.4);
+    d += ` L ${x} ${y}`;
+  }
+  d += ` L ${w} ${vh()} L 0 ${vh()} Z`;
+  document.getElementById('wavePath').setAttribute('d', d);
+
+  let d2 = `M 0 ${wy + amp2}`;
+  for (let x = 0; x <= w; x += 8) {
+    const y = wy + Math.sin((x / w) * Math.PI * 5 + waveOffset * 1.6 + 1) * amp2
+                  + Math.cos((x / w) * Math.PI * 3 + waveOffset * 0.9) * (amp2 * 0.5);
+    d2 += ` L ${x} ${y}`;
+  }
+  d2 += ` L ${w} ${wy + 18} L 0 ${wy + 18} Z`;
+  document.getElementById('wavePath2').setAttribute('d', d2);
+
+  const svg = document.getElementById('waterSvg');
+  svg.setAttribute('height', `${vh()}px`);
+  svg.style.top = '0px';
+
+  requestAnimationFrame(drawWaves);
+}
+
+// ═══════════════════════════════════════════════════
+//  SKY CLOUDS
+// ═══════════════════════════════════════════════════
+function spawnCloud() {
+  const el = document.createElement('div');
+  el.className = 'cloud';
+  const h = 18 + Math.random() * 28;
+  const w = 60 + Math.random() * 120;
+  const top = 8 + Math.random() * (waterY() * 0.55);
+  const dur = 28 + Math.random() * 30;
+  el.style.cssText = `width:${w}px;height:${h}px;top:${top}px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;`;
+  document.getElementById('skyClouds').appendChild(el);
+}
+for (let i = 0; i < 7; i++) spawnCloud();
+
+// ═══════════════════════════════════════════════════
+//  UNDERWATER RAYS & AMBIENT PARTICLES
+// ═══════════════════════════════════════════════════
+const sceneEl = document.getElementById('scene');
+
+function spawnUwParticle() {
+  const p = document.createElement('div');
+  p.className = 'uw-particle';
+  const sz = 3 + Math.random() * 8;
+  const x = Math.random() * vw();
+  const dur = 4 + Math.random() * 6;
+  const wy = waterY();
+  const startY = vh() - 20;
+  p.style.cssText = `
+    position:fixed;
+    width:${sz}px; height:${sz}px;
+    left:${x}px; top:${startY}px;
+    animation-duration:${dur}s;
+    z-index:6;
+  `;
+  document.body.appendChild(p);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    p.style.transform = `translateY(-${vh() - wy + 20}px)`;
+    p.style.opacity = '0';
+  }));
+  setTimeout(() => p.remove(), dur * 1000 + 200);
+}
+setInterval(spawnUwParticle, 300);
+
+// ═══════════════════════════════════════════════════
+//  SPAWN IDLE BUBBLE
+// ═══════════════════════════════════════════════════
+let idleCounter = 0;
+
+function spawnIdleBubble() {
+  // 选当前数量最少的欲望类型，保持三种平衡
+  const counts = DESIRES.map(d => idleBubbles.filter(b => b.desire.key === d.key).length);
+  const minCount = Math.min(...counts);
+  // 在数量最少的类型中随机选一个
+  const candidates = DESIRES.filter((_, i) => counts[i] === minCount);
+  const desire = candidates[Math.floor(Math.random() * candidates.length)];
+
+  const sz  = Math.round((44 + Math.floor(Math.random() * 20)) * 1.5);
+  const pos = placeInitial(sz, idleBubbles);
+
+  const el = document.createElement('div');
+  el.className = `bubble ${desire.cls} idle`;
+  el.innerHTML = desire.label.replace('\n', '<br>');
+  el.style.cssText = `
+    width:${sz}px; height:${sz}px;
+    left:${pos.px - sz/2}px; top:${pos.py - sz/2}px;
+    font-size:${sz > 58 ? 0.78 : 0.70}rem;
+    opacity:0;
+    pointer-events:auto;
+    transition:opacity 0.6s ease;
+    z-index:8;
+  `;
+  sceneEl.appendChild(el);
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity = '1'; }));
+
+  const entry = {
+    el, desire, sz,
+    px: pos.px, py: pos.py,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+  };
+  el.onclick = () => onBubbleClick(entry);
+  idleBubbles.push(entry);
+  return entry;
+}
+
+// ═══════════════════════════════════════════════════
+//  CLICK → RISE TO SURFACE
+// ═══════════════════════════════════════════════════
+function onBubbleClick(entry) {
+  if (entry.clicked) return;
+  entry.clicked = true;
+
+  const slotIdx = risingSlots.findIndex(s => s === null);
+  if (slotIdx === -1) {
+    entry.clicked = false;
+    showToast('最多同时觉察 3 个欲望');
+    return;
+  }
+
+  idleBubbles = idleBubbles.filter(b => b !== entry);
+
+  const { el, desire, sz } = entry;
+
+  el.style.left = `${entry.px - sz/2}px`;
+  el.style.top  = `${entry.py - sz/2}px`;
+  el.style.transition = 'none';
+  el.classList.remove('idle');
+  el.classList.add('rising');
+  el.style.animation    = 'none';
+  el.style.pointerEvents = 'none';
+  el.style.zIndex = '12';
+
+  const tSz    = TSZ;
+  const target = surfaceSlotPos();
+  const cLeft  = entry.px - sz / 2;
+  const cTop   = entry.py - sz / 2;
+  const dist   = Math.hypot(target.x - entry.px, target.y - entry.py);
+  const dur    = Math.max(0.7, dist / 240);
+
+  requestAnimationFrame(() => {
+    el.style.transition = `left ${dur.toFixed(2)}s cubic-bezier(0.3,1.2,0.6,1), top ${dur.toFixed(2)}s cubic-bezier(0.3,1.2,0.6,1), width ${dur.toFixed(2)}s ease, height ${dur.toFixed(2)}s ease`;
+    el.style.left   = `${target.x - tSz/2}px`;
+    el.style.top    = `${target.y - tSz/2}px`;
+    el.style.width  = `${tSz}px`;
+    el.style.height = `${tSz}px`;
+  });
+
+  const slotEntry = { el, desire, slotIdx, tSz };
+  risingSlots[slotIdx] = slotEntry;
+
+  setTimeout(() => {
+    el.classList.remove('rising');
+    el.classList.add('at-surface');
+    el.style.transition = '';
+    tryMerge();
+    updateInstruction();
+  }, dur * 1000 + 60);
+
+  setTimeout(() => {
+    const missing = IDLE_COUNT - idleBubbles.length;
+    for (let i = 0; i < missing; i++) {
+      setTimeout(() => spawnIdleBubble(), i * 80);
+    }
+  }, 1200);
+}
+
+// ═══════════════════════════════════════════════════
+//  DECISION — releases all at-surface bubbles
+// ═══════════════════════════════════════════════════
+function handleDecision(allow) {
+  if (!mergedBubble) return;
+
+  document.getElementById('sharedDeny').classList.remove('show');
+  document.getElementById('sharedAllow').classList.remove('show');
+
+  const { el: mEl, atSurface, sz: mSz } = mergedBubble;
+  mergedBubble = null;
+
+  if (allow) {
+    mEl.classList.add('go-sky');
+    setTimeout(() => mEl.remove(), 2100);
+    released += atSurface.length;
+    document.getElementById('counter').textContent = `已释放 ${released} 个欲望`;
+    showToast('✨ 已允许，随它去吧');
+  } else {
+    mEl.classList.add('go-sky');
+    setTimeout(() => mEl.remove(), 2100);
+    showToast('🌊 已承认，随它去吧');
+  }
+
+  for (const e of atSurface) {
+    e.el.remove();
+    risingSlots[e.slotIdx] = null;
+  }
+
+  updateInstruction();
+
+  const missing = IDLE_COUNT - idleBubbles.length;
+  for (let i = 0; i < missing; i++) {
+    setTimeout(() => spawnIdleBubble(), 2200 + i * 80);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  INSTRUCTION
+// ═══════════════════════════════════════════════════
+function updateInstruction() {
+  const atSurface = risingSlots.filter(s => s && s.el.classList.contains('at-surface'));
+  const instr = document.getElementById('instr');
+  if (atSurface.length > 0) {
+    instr.textContent = '允许 — 随它去；不允许 — 承认它在';
+  } else {
+    instr.textContent = '点击水下的欲望泡泡，让它浮上水面（最多同时3个）';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+drawWaves();
+physicsTick();
+
+// Spawn initial bubbles with small delay between each
+(function spawnAll() {
+  for (let i = 0; i < IDLE_COUNT; i++) {
+    setTimeout(() => spawnIdleBubble(), i * 60);
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+//  GAIN BOOK — Supabase backend
+// ═══════════════════════════════════════════════════
+const SUPA_URL  = 'https://ryoaxziysgdkjcjiuqti.supabase.co';
+const SUPA_KEY  = 'sb_publishable_Ap2EFva4rAb5QgLTWejoxA_WwQz6dxU';
+const GAIN_MAX  = 50;
+const CAT_ICONS = { '健康':'🌿', '财富':'💰', 'SP':'💞', '人际关系':'🤝', '学业':'📚', '其他':'✨' };
+
+let gainSelectedCat    = '健康';
+let gainSelectedFilter = 'all';
+let gainSort           = 'likes'; // 'likes' | 'time'
+const likedKeys        = new Set();
+
+// 我的记录存在 sessionStorage（当次会话内保留）
+function getMyItems() {
+  try { return JSON.parse(sessionStorage.getItem('gainMy') || '[]'); } catch(_) { return []; }
+}
+function saveMyItems(items) {
+  try { sessionStorage.setItem('gainMy', JSON.stringify(items)); } catch(_) {}
+}
+
+async function supaFetch(path, opts = {}) {
+  const res = await fetch(SUPA_URL + path, {
+    ...opts,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer || '',
+      ...opts.headers,
+    },
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+function openGainBook() {
+  document.getElementById('gainOverlay').classList.add('open');
+  loadGains();
+}
+function closeGainBook() {
+  document.getElementById('gainOverlay').classList.remove('open');
+}
+function closeGainBookOverlay(e) {
+  if (e.target === document.getElementById('gainOverlay')) closeGainBook();
+}
+function selectCat(btn) {
+  document.querySelectorAll('.gain-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  gainSelectedCat = btn.dataset.cat;
+}
+function selectFilter(btn) {
+  document.querySelectorAll('.gain-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  gainSelectedFilter = btn.dataset.filter;
+  loadGains();
+}
+function setSort(s) {
+  gainSort = s;
+  document.getElementById('sortLikes').classList.toggle('active', s === 'likes');
+  document.getElementById('sortTime').classList.toggle('active', s === 'time');
+  loadGains();
+}
+function formatRelTime(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000)    return '刚刚';
+  if (diff < 3600000)  return Math.floor(diff/60000) + ' 分钟前';
+  if (diff < 86400000) return Math.floor(diff/3600000) + ' 小时前';
+  return Math.floor(diff/86400000) + ' 天前';
+}
+
+async function loadGains() {
+  const myEl     = document.getElementById('myGainList');
+  const sharedEl = document.getElementById('sharedGainList');
+  const titleEl  = document.getElementById('sharedGainTitle');
+  sharedEl.innerHTML = '<li class="gain-loading">加载中…</li>';
+
+  // 我的记录（sessionStorage）
+  let myItems = getMyItems();
+  if (gainSelectedFilter !== 'all') myItems = myItems.filter(i => i.cat === gainSelectedFilter);
+  const myTitleEl = document.getElementById('myGainTitle');
+  if (myTitleEl) myTitleEl.textContent = `我的记录（${myItems.length} 条）`;
+  renderGainList(myEl, myItems, false);
+
+  // 所有人的收获（Supabase）
+  try {
+    const order = gainSort === 'likes' ? 'likes.desc,ts.desc' : 'ts.desc';
+    let url = `/rest/v1/gain_entries?select=*&order=${order}&limit=${GAIN_MAX}`;
+    if (gainSelectedFilter !== 'all') url += `&cat=eq.${encodeURIComponent(gainSelectedFilter)}`;
+    const items = await supaFetch(url);
+    if (titleEl) titleEl.textContent = `所有人的收获（${(items||[]).length} 条）`;
+    renderGainList(sharedEl, items || [], true);
+  } catch(e) {
+    sharedEl.innerHTML = '<li class="gain-empty">加载失败，请稍后再试</li>';
+  }
+}
+
+function renderGainList(el, items, isShared) {
+  if (!items.length) {
+    el.innerHTML = `<li class="gain-empty">${isShared ? '还没有人分享，成为第一个吧 🌸' : '暂无记录'}</li>`;
+    return;
+  }
+  el.innerHTML = items.map(item => {
+    const icon    = CAT_ICONS[item.cat] || '🌸';
+    const badge   = item.cat ? `<span class="gain-badge">${icon} ${item.cat}</span>` : '';
+    const likes   = item.likes || 0;
+    const itemId  = isShared ? (item.id + '') : (item.ts + '');
+    const liked   = likedKeys.has(itemId);
+    const likeBtn = isShared
+      ? `<button class="gain-like-btn ${liked ? 'liked' : ''}" onclick="likeGain('${item.id}', this)">
+           ${liked ? '❤️' : '🤍'} <span class="gain-like-count">${likes > 0 ? likes : '赞'}</span>
+         </button>`
+      : `<span class="gain-meta">${likes > 0 ? '❤️ ' + likes : ''}</span>`;
+    return `
+    <li class="gain-item ${isShared ? 'shared' : ''}">
+      <span class="gain-text">${escapeHtml(item.text)}</span>
+      <div class="gain-footer">
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${badge}
+          <span class="gain-meta">${formatRelTime(item.ts)}</span>
+        </div>
+        ${likeBtn}
+      </div>
+    </li>`;
+  }).join('');
+}
+
+async function likeGain(id, btn) {
+  if (likedKeys.has(id + '')) return;
+  likedKeys.add(id + '');
+  btn.classList.add('liked');
+  btn.innerHTML = '❤️ <span class="gain-like-count">…</span>';
+  try {
+    const rows = await supaFetch(`/rest/v1/gain_entries?id=eq.${id}&select=likes`);
+    const current = (rows && rows[0]) ? (rows[0].likes || 0) : 0;
+    const newLikes = current + 1;
+    await supaFetch(`/rest/v1/gain_entries?id=eq.${id}`, {
+      method: 'PATCH',
+      prefer: 'return=minimal',
+      body: JSON.stringify({ likes: newLikes }),
+    });
+    btn.querySelector('.gain-like-count').textContent = newLikes;
+  } catch(e) {
+    btn.querySelector('.gain-like-count').textContent = '赞';
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function submitGain() {
+  const input = document.getElementById('gainInput');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  const entry = { text, cat: gainSelectedCat, ts: Date.now(), likes: 0 };
+
+  // 保存到我的记录
+  const myItems = getMyItems();
+  myItems.unshift(entry);
+  if (myItems.length > 30) myItems.splice(30);
+  saveMyItems(myItems);
+
+  // 同时提交到 Supabase
+  try {
+    await supaFetch('/rest/v1/gain_entries', {
+      method: 'POST',
+      prefer: 'return=minimal',
+      body: JSON.stringify(entry),
+    });
+    showToast(`${CAT_ICONS[gainSelectedCat] || '🌸'} 收获已记录到 Gain Book`);
+  } catch(e) {
+    showToast(`${CAT_ICONS[gainSelectedCat] || '🌸'} 已保存到我的记录`);
+  }
+  loadGains();
+}
+</script>
+</body>
+</html>
