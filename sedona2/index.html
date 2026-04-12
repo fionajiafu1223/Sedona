@@ -342,105 +342,9 @@
     0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.7; }
     50%       { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
   }
-
-  /* ── MENU BUTTON ── */
-  .menu-btn {
-    position: fixed; top: 16px; left: 16px; z-index: 600;
-    width: 42px; height: 42px; border-radius: 50%;
-    background: rgba(255,255,255,0.2); backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(255,255,255,0.35);
-    color: #fff; font-size: 1.05rem; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 14px rgba(0,40,100,0.18);
-    transition: transform 0.2s, background 0.2s;
-  }
-  .menu-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.32); }
-  /* ── SIDEBAR ── */
-  .sidebar-overlay {
-    position: fixed; inset: 0; background: rgba(0,20,60,0.25);
-    z-index: 550; opacity: 0; pointer-events: none; transition: opacity 0.26s ease;
-  }
-  .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
-  .sidebar {
-    position: fixed; top: 0; left: 0; bottom: 0;
-    width: min(260px, 80vw);
-    background: rgba(255,255,255,0.12); backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-right: 1px solid rgba(255,255,255,0.22);
-    box-shadow: 4px 0 32px rgba(0,40,100,0.2);
-    z-index: 560; display: flex; flex-direction: column;
-    transform: translateX(-100%);
-    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-    font-family: 'Noto Serif SC', serif; overflow-y: auto;
-  }
-  .sidebar.open { transform: translateX(0); }
-  .sidebar-header { display: flex; align-items: center; padding: 18px 18px 14px; border-bottom: 1px solid rgba(255,255,255,0.18); }
-  .sidebar-title { font-size: 0.95rem; font-weight: 600; color: rgba(255,255,255,0.92); letter-spacing: 0.1em; }
-  .sidebar-section-label { padding: 8px 12px 4px; font-size: 0.68rem; letter-spacing: 0.2em; color: rgba(180,220,255,0.5); font-family: 'Noto Sans SC', sans-serif; }
-  .sidebar-menu { list-style: none; padding: 6px 0; }
-  .sidebar-menu-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 15px 20px; cursor: pointer;
-    font-family: 'Noto Serif SC', serif; font-size: 0.9rem;
-    color: rgba(220,240,255,0.88); letter-spacing: 0.06em;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    transition: background 0.15s; user-select: none;
-  }
-  .sidebar-menu-item:last-child { border-bottom: none; }
-  .sidebar-menu-item:hover { background: rgba(255,255,255,0.12); color: #fff; }
-  .sidebar-menu-item .menu-icon { font-size: 1.1rem; width: 22px; text-align: center; }
-  .sidebar-menu-item .menu-arrow { margin-left: auto; color: rgba(180,220,255,0.6); font-size: 0.85rem; }
-  /* ── LANG PANEL ── */
-  .lang-panel {
-    position: fixed; top: 50%; left: 50%;
-    transform: translateX(-50%) translateY(-50%) scale(0.97);
-    z-index: 590; width: min(280px, 85vw);
-    background: rgba(22,48,100,0.93); backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.14); border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0,20,70,0.55); padding: 20px 16px;
-    opacity: 0; pointer-events: none; visibility: hidden;
-    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-  }
-  .lang-panel.open { opacity: 1; pointer-events: auto; visibility: visible; transform: translateX(-50%) translateY(-50%) scale(1); }
-  .lang-panel-title { font-family: 'Noto Serif SC', serif; font-size: 0.8rem; color: rgba(200,220,255,0.65); letter-spacing: 0.22em; text-align: center; margin-bottom: 16px; }
-  .lang-option { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 8px; color: rgba(220,240,255,0.88); font-family: 'Noto Serif SC', serif; font-size: 0.9rem; letter-spacing: 0.06em; transition: background 0.15s; }
-  .lang-option:last-child { margin-bottom: 0; }
-  .lang-option:hover { background: rgba(255,255,255,0.1); }
-  .lang-option.active { background: rgba(60,120,220,0.35); border-color: rgba(120,180,255,0.35); }
-  .lang-option-check { color: rgba(120,200,255,0.8); font-size: 1rem; }
-
 </style>
 </head>
 <body>
-
-<button class="menu-btn" id="menuBtn" onclick="toggleSidebar()" title="目录">☰</button>
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <span class="sidebar-title">📋 目录</span>
-  </div>
-  <div class="sidebar-section-label">释放工具</div>
-  <ul class="sidebar-menu" style="border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:4px;">
-    <li class="sidebar-menu-item" onclick="location.href='/'"><span class="menu-icon">🫧</span><span>欲望释放</span><span class="menu-arrow">›</span></li>
-    <li class="sidebar-menu-item" onclick="location.href='/sedona2/'"><span class="menu-icon">🫧</span><span>识别即释放</span><span class="menu-arrow">›</span></li>
-    <li class="sidebar-menu-item" onclick="location.href='/emotions/'"><span class="menu-icon">🫧</span><span>情绪释放</span><span class="menu-arrow">›</span></li>
-    <li class="sidebar-menu-item" onclick="location.href='/whole/'"><span class="menu-icon">🫧</span><span>情绪欲望完整释放</span><span class="menu-arrow">›</span></li>
-    <li class="sidebar-menu-item" onclick="location.href='/double/'"><span class="menu-icon">🫧</span><span>好处坏处释放</span><span class="menu-arrow">›</span></li>
-  </ul>
-  <div class="sidebar-section-label">功能</div>
-  <ul class="sidebar-menu">
-    <li class="sidebar-menu-item" onclick="closeSidebar();setTimeout(toggleLang,300)"><span class="menu-icon">🌐</span><span>语言</span><span class="menu-arrow">›</span></li>
-  </ul>
-  <ul class="sidebar-menu" style="border-top:1px solid rgba(255,255,255,0.12);margin-top:4px;">
-    <li class="sidebar-menu-item" onclick="window.open('https://freedreleasing.com/support','_blank')"><span class="menu-icon">☕</span><span>支持我们的网站</span><span class="menu-arrow">›</span></li>
-  </ul>
-</div>
-<div class="lang-panel" id="langPanel">
-  <div class="lang-panel-title">选 择 语 言</div>
-  <div class="lang-option active" id="lang-opt-zh" onclick="selectLang('zh')"><span>中文</span><span class="lang-option-check" id="lang-check-zh">✓</span></div>
-  <div class="lang-option" id="lang-opt-en" onclick="selectLang('en')"><span>English</span><span class="lang-option-check" id="lang-check-en" style="opacity:0">✓</span></div>
-</div>
-
 
 <!-- Sky layer -->
 <div class="sky-clouds" id="skyClouds"></div>
@@ -448,10 +352,10 @@
 <!-- INTRO OVERLAY -->
 <div class="intro-overlay" id="introOverlay">
   <div class="intro-card">
-    <span class="intro-line intro-line-1">觉察此刻升起的欲望</span>
+    <span class="intro-line intro-line-1" id="introLine1">觉察此刻升起的欲望</span>
     <span class="intro-divider"></span>
-    <span class="intro-line intro-line-2">点击水中飘动的泡泡</span>
-    <span class="intro-line intro-line-3">识别即是释放</span>
+    <span class="intro-line intro-line-2" id="introLine2">点击水中飘动的泡泡</span>
+    <span class="intro-line intro-line-3" id="introLine3">识别即是释放</span>
   </div>
 </div>
 
@@ -921,7 +825,7 @@ function onBubbleClick(entry) {
   el.style.filter = 'none';
 
   const label = desire.label.replace('\n', '');
-  showToast(`🌸 「${label}」已悄然离去`);
+  showToast(STRINGS_S2[s2Lang].toast_release.replace('{label}', label));
 
   // Fly to sky via JS transition
   const currentTop = entry.py - sz/2;
@@ -936,7 +840,7 @@ function onBubbleClick(entry) {
   setTimeout(() => {
     el.remove();
     released++;
-    document.getElementById('counter').textContent = `已释放 ${released} 个欲望`;
+    document.getElementById('counter').textContent = STRINGS_S2[s2Lang].counter.replace('{n}', released);
     setTimeout(() => spawnIdleBubble(desire), 800);
     updateInstruction();
   }, 1950);
@@ -981,7 +885,7 @@ function handleDecision(allow) {
         setTimeout(() => spawnIdleBubble(s.desire), 800);
       }
     }
-    document.getElementById('counter').textContent = `已释放 ${released} 个欲望`;
+    document.getElementById('counter').textContent = STRINGS_S2[s2Lang].counter.replace('{n}', released);
     releasing = false;
     updateInstruction();
   }, 1950);
@@ -994,11 +898,11 @@ function updateInstruction() {
   const active = risingSlots.filter(Boolean).length;
   const atSurf = risingSlots.filter(s => s && s.el.classList.contains('at-surface')).length;
   if (active === 0) {
-    document.getElementById('instr').textContent = '识别现在是哪种想要，点击允许释放';
+    document.getElementById('instr').textContent = STRINGS_S2[s2Lang].instr_idle;
   } else if (atSurf > 0) {
-    document.getElementById('instr').textContent = '欲望正在飘离……';
+    document.getElementById('instr').textContent = STRINGS_S2[s2Lang].instr_float;
   } else {
-    document.getElementById('instr').textContent = `${active} 个欲望正在上浮……`;
+    document.getElementById('instr').textContent = STRINGS_S2[s2Lang].instr_rising.replace('{n}', active);
   }
 }
 
@@ -1071,33 +975,66 @@ window.addEventListener('load', () => {
 
 window.addEventListener('resize', positionLabels);
 
-// ── SIDEBAR & LANG ──
-var currentLang = 'zh';
-function toggleSidebar() {
-  var isOpen = document.getElementById('sidebar').classList.contains('open');
-  if (isOpen) { closeSidebar(); } else {
-    document.getElementById('sidebar').classList.add('open');
-    document.getElementById('sidebarOverlay').classList.add('open');
-    document.getElementById('menuBtn').style.display = 'none';
+// ── i18n ──
+const STRINGS_S2 = {
+  zh: {
+    title: '圣多纳释放法',
+    subtitle: '觉察 · 允许 · 释放',
+    d_control: '想要\n控制', d_approval: '想要\n认同', d_safety: '想要\n安全',
+    instr_idle: '识别现在是哪种想要，点击允许释放',
+    instr_rising: '{n} 个欲望正在上浮……',
+    instr_float: '欲望正在飘离……',
+    counter: '已释放 {n} 个欲望',
+    toast_release: '🌸 「{label}」已悄然离去',
+    label_c: '表意识', label_s: '潜意识',
+    intro1: '觉察此刻升起的欲望', intro2: '点击水中飘动的泡泡', intro3: '识别即是释放',
+  },
+  en: {
+    title: 'Sedona Method',
+    subtitle: 'Notice · Allow · Release',
+    d_control: 'Control', d_approval: 'Approval', d_safety: 'Security',
+    instr_idle: 'Identify your desire — tap to release',
+    instr_rising: '{n} desires rising…',
+    instr_float: 'Desire drifting away…',
+    counter: '{n} desires released',
+    toast_release: '🌸 「{label}」has quietly dissolved',
+    label_c: 'Conscious', label_s: 'Subconscious',
+    intro1: 'Notice the desire arising now', intro2: 'Tap the bubble floating by', intro3: 'Recognition is release',
   }
+};
+let s2Lang = 'zh';
+function s2ApplyLang(lang) {
+  s2Lang = lang;
+  var L = STRINGS_S2[lang];
+  var h1 = document.querySelector('.header h1');
+  if (h1) h1.textContent = L.title;
+  var p = document.querySelector('.header p');
+  if (p) p.textContent = L.subtitle;
+  var title = document.querySelector('title');
+  if (title) title.textContent = lang === 'en' ? 'Sedona Method · Inner Healing' : '圣多纳释放法 · 内心疗愈';
+  DESIRES[0].label = L.d_control;
+  DESIRES[1].label = L.d_approval;
+  DESIRES[2].label = L.d_safety;
+  document.getElementById('instr').textContent = L.instr_idle;
+  document.getElementById('counter').textContent = L.counter.replace('{n}', released);
+  var lc = document.getElementById('labelC');
+  if (lc) lc.textContent = L.label_c;
+  var ls = document.getElementById('labelS');
+  if (ls) ls.textContent = L.label_s;
+  // Intro overlay
+  var il1 = document.getElementById('introLine1');
+  if (il1) il1.textContent = L.intro1;
+  var il2 = document.getElementById('introLine2');
+  if (il2) il2.textContent = L.intro2;
+  var il3 = document.getElementById('introLine3');
+  if (il3) il3.textContent = L.intro3;
 }
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('open');
-  document.getElementById('menuBtn').style.display = 'flex';
-}
-function toggleLang() {
-  document.getElementById('langPanel').classList.toggle('open');
-}
-function selectLang(lang) {
-  currentLang = lang;
-  document.getElementById('lang-opt-zh').classList.toggle('active', lang==='zh');
-  document.getElementById('lang-opt-en').classList.toggle('active', lang==='en');
-  document.getElementById('lang-check-zh').style.opacity = lang==='zh'?'1':'0';
-  document.getElementById('lang-check-en').style.opacity = lang==='en'?'1':'0';
-  setTimeout(function(){ document.getElementById('langPanel').classList.remove('open'); }, 400);
-}
+document.addEventListener('fr-lang-change', function(e) {
+  s2ApplyLang(e.detail);
+});
+s2ApplyLang(localStorage.getItem('fr-lang') || 'zh');
 
 </script>
+<script src="/sidebar.js"></script>
 </body>
 </html>
