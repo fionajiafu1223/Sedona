@@ -917,7 +917,7 @@
     z-index: 25; pointer-events: none;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     opacity: 0; transition: opacity 0.4s ease;
-    max-width: 80vw;
+    width: min(72vw, 320px);
   }
   .active-goal-banner.show { opacity: 1; }
   .active-goal-label {
@@ -927,11 +927,12 @@
   .active-goal-text {
     background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 30px; padding: 6px 20px;
+    border-radius: 16px; padding: 8px 18px;
     font-family: 'Noto Serif SC', serif; font-size: 0.82rem;
     color: rgba(255,255,255,0.92); letter-spacing: 0.06em;
     text-shadow: 0 1px 6px rgba(0,40,100,0.3);
-    max-width: 100%; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    width: 100%; text-align: center;
+    white-space: normal; word-break: break-all; line-height: 1.5;
   }
 
   /* ── RELEASE ASSISTANT ── */
@@ -1311,7 +1312,7 @@
           <button class="gain-cat" data-cat="其他" onclick="selectGoalCat(this)">✨ 其他</button>
         </div>
         <div class="goals-add-row">
-          <input type="text" id="goalInput" placeholder="写下想要释放的目标…" maxlength="60"
+          <input type="text" id="goalInput" placeholder="写下想要释放的目标…"
                  onkeydown="if(event.key==='Enter')addGoal()" />
           <button onclick="addGoal()">添加</button>
         </div>
