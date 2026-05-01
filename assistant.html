@@ -391,8 +391,30 @@ async function runAssistant() {
       json = JSON.parse(raw.slice(start, end + 1));
     } catch(_) {}
 
-    asstPoints = (json.points || []).filter(p => DESIRE_INFO[p.desire]);
-    if (!asstPoints.length) throw new Error('parse failed');
+    // Try multiple possible field names from AI response
+    let rawPoints = json.points || json.results || json.analysis || json.data || [];
+    if (!Array.isArray(rawPoints)) rawPoints = [];
+    
+    // Map common variations to expected schema
+    asstPoints = rawPoints.map(p => {
+      // Normalize desire field
+      let desire = p.desire || p.type || p.category || '';
+      desire = String(desire).toLowerCase();
+      if (desire.includes('control') || desire.includes('控制')) desire = 'control';
+      else if (desire.includes('approval') || desire.includes('认同') || desire.includes('被爱')) desire = 'approval';
+      else if (desire.includes('safety') || desire.includes('安全') || desire.includes('survival')) desire = 'safety';
+      return {
+        desire: desire,
+        quote: p.quote || p.text || p.phrase || '',
+        reason: p.reason || p.explanation || p.analysis || ''
+      };
+    }).filter(p => DESIRE_INFO[p.desire]);
+    
+    if (!asstPoints.length) {
+      // Show raw response so user can see what AI returned
+      console.log('Raw AI response:', raw);
+      throw new Error('AI 返回格式异常，请重试。返回内容：' + raw.slice(0, 100));
+    }
 
     // 重置结果区结构（防止被错误信息替换掉）
     resultEl.innerHTML = '<div class="asst-desire-badges" id="asstBadges"></div>'
