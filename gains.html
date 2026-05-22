@@ -1047,15 +1047,23 @@ window.doReportEntry = async function() {
   }
   // 写入云端 gain_reports 表
   try {
-    await supaFetch('/rest/v1/gain_reports', {
-      method: 'POST',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({
-        entry_id: Number(_warnTargetEntryId),
-        reporter_id: currentUser.id,
-      }),
-      useAuth: true,
-    });
+    const sess = await supaAuth.auth.getSession();
+    const token = sess && sess.data && sess.data.session && sess.data.session.access_token;
+    if (token) {
+      await fetch(SUPA_URL + '/rest/v1/gain_reports', {
+        method: 'POST',
+        headers: {
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify({
+          entry_id: _warnTargetEntryId,
+          reporter_id: currentUser.id,
+        }),
+      });
+    }
   } catch(e) {
     console.warn('举报上报失败（已本地隐藏）:', e);
   }
