@@ -97,6 +97,21 @@ body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',ser
   .gain-like-btn:hover { background: rgba(255,100,130,0.08); border-color: rgba(255,100,130,0.4); color: #e05080; }
   .gain-like-btn.liked { background: rgba(255,100,130,0.12); border-color: rgba(255,100,130,0.5); color: #e05080; }
   .gain-like-count { font-weight: 600; }
+  /* 分享按钮 */
+  .gain-share-btn {
+    padding: 3px 10px; border-radius: 14px;
+    border: 1.5px solid rgba(74,159,212,0.45);
+    background: rgba(255,255,255,0.6);
+    font-size: 0.68rem; color: #2a7abf;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer; transition: all 0.18s ease;
+  }
+  .gain-share-btn:hover { background: rgba(200,230,255,0.8); }
+  .gain-share-btn.shared {
+    border-color: rgba(100,160,100,0.35);
+    color: #5a9a6a; background: rgba(200,240,210,0.4);
+    cursor: not-allowed; opacity: 0.8;
+  }
   /* ⚠️ 举报/屏蔽按钮 */
   .gain-warn-btn {
     padding: 3px 10px; border-radius: 14px;
@@ -834,12 +849,19 @@ function renderGainList(el, items, isShared) {
     const warnBtn = showWarn
       ? '<button class="gain-warn-btn" onclick="openWarnMenu(\'' + item.id + '\', \'' + item.user_id + '\')">⋯</button>'
       : '';
+    // 分享按钮：只在「我的收获」里显示，已分享的显示"已分享"（灰掉）
+    const isAlreadyShared = !isShared && currentUser && cachedSharedIds.has(String(item.id));
+    const shareBtn = (!isShared && currentUser)
+      ? (isAlreadyShared
+          ? '<button class="gain-share-btn shared" disabled>已分享</button>'
+          : '<button class="gain-share-btn" onclick="shareGain(\'' + item.id + '\', this)">📤 分享</button>')
+      : '';
     return '<li class="gain-item ' + (isShared ? 'shared' : '') + '">' +
       '<span class="gain-text">' + escapeHtml(item.text) + '</span>' +
       '<div class="gain-footer">' +
       '<div style="display:flex;align-items:center;gap:6px;">' + badge +
       '<span class="gain-meta">' + formatRelTime(item.ts) + '</span></div>' +
-      '<div style="display:flex;align-items:center;">' + likeBtn + warnBtn + '</div></li>';
+      '<div style="display:flex;align-items:center;gap:4px;">' + shareBtn + likeBtn + warnBtn + '</div></li>';
   }).join('');
 }
 
@@ -849,6 +871,7 @@ function renderGainList(el, items, isShared) {
 // 未登录用户：从 localStorage 读
 // ════════════════════════════════════════
 let cachedMyItems = null;  // 缓存当前用户的"我的收获"数据
+let cachedSharedIds = new Set(); // 缓存已分享到 gain_public 的 gain_entries id
 
 async function loadMyData() {
   const myEl = document.getElementById('myGainListSb');
@@ -860,11 +883,13 @@ async function loadMyData() {
     // 登录用户：从云端拉
     myEl.innerHTML = '<li class="gain-loading">加载中…</li>';
     try {
-      const rows = await supaFetch(
-        '/rest/v1/gain_entries?user_id=eq.' + currentUser.id +
-        '&select=*&order=ts.desc&limit=' + GAIN_MAX
-      );
+      const [rows, sharedRows] = await Promise.all([
+        supaFetch('/rest/v1/gain_entries?user_id=eq.' + currentUser.id + '&select=*&order=ts.desc&limit=' + GAIN_MAX),
+        supaFetch('/rest/v1/gain_public?user_id=eq.' + currentUser.id + '&select=id&limit=1000'),
+      ]);
       myItems = rows || [];
+      // 记录已分享的 id（gain_public 里跟 gain_entries 是同一批 id）
+      cachedSharedIds = new Set((sharedRows || []).map(r => String(r.id)));
     } catch(e) {
       console.error('Load my gains error:', e);
       myItems = [];
@@ -872,6 +897,7 @@ async function loadMyData() {
   } else {
     // 未登录：从 localStorage 读
     myItems = getMyItems();
+    cachedSharedIds = new Set();
   }
 
   cachedMyItems = myItems;
@@ -888,6 +914,54 @@ async function loadMyData() {
 async function loadMyGains() { return loadMyData(); }
 
 // ════════════════════════════════════════
+// 分享收获到公开池
+// ════════════════════════════════════════
+async function shareGain(entryId, btn) {
+  if (!currentUser) return;
+  // 立刻禁用按钮防止重复点击
+  btn.disabled = true;
+  btn.textContent = '分享中…';
+
+  // 找到这条收获的完整数据
+  const item = (cachedMyItems || []).find(it => String(it.id) === String(entryId));
+  if (!item) {
+    btn.disabled = false;
+    btn.textContent = '📤 分享';
+    showToast('找不到这条收获，请刷新后重试');
+    return;
+  }
+
+  try {
+    // 把这条收获复制到 gain_public 表（保留原 id）
+    await supaFetch('/rest/v1/gain_public', {
+      method: 'POST',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        id: item.id,
+        text: item.text,
+        cat: item.cat,
+        ts: item.ts,
+        likes: item.likes || 0,
+        user_id: currentUser.id,
+      }),
+      useAuth: true,
+    });
+    // 更新已分享缓存
+    cachedSharedIds.add(String(entryId));
+    // 按钮变成"已分享"
+    btn.textContent = '已分享';
+    btn.classList.add('shared');
+    btn.disabled = true;
+    showToast('✅ 已分享到所有人的收获');
+  } catch(e) {
+    console.error('Share gain error:', e);
+    btn.disabled = false;
+    btn.textContent = '📤 分享';
+    showToast('分享失败，请重试');
+  }
+}
+
+// ════════════════════════════════════════
 // 加载「所有人的收获」
 // ════════════════════════════════════════
 async function loadSharedGains() {
@@ -897,7 +971,7 @@ async function loadSharedGains() {
 
   try {
     const order = gainSortSb === 'likes' ? 'likes.desc,ts.desc' : 'ts.desc';
-    let url = `/rest/v1/gain_entries?select=*&order=${order}&limit=${GAIN_MAX}`;
+    let url = `/rest/v1/gain_public?select=*&order=${order}&limit=${GAIN_MAX}`;
     if (gainSelectedFilterSb !== 'all') url += `&cat=eq.${encodeURIComponent(gainSelectedFilterSb)}`;
     let items = await supaFetch(url);
     // 过滤掉被屏蔽的用户/已举报的内容
@@ -989,8 +1063,7 @@ async function submitGainSb() {
   if (activeGainTab === 'mine') {
     loadMyData();
   }
-  // 「所有人的收获」也刷新一下（登录用户写的会出现在公开池）
-  loadSharedGains();
+  // 新写的收获默认私密，不自动进公开池
 }
 
 async function _submitGainEntry(text, cat) {
