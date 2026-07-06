@@ -26,7 +26,7 @@
         }
         .container{
             width:100%;
-            max-width:560px;
+            max-width:520px;
             padding:60px 25px 80px;
             text-align:center;
         }
@@ -46,46 +46,46 @@
             color:#666;
             margin-bottom:48px;
         }
-        .design-card{
+        .card{
             background:white;
             border-radius:24px;
-            padding:24px;
-            box-shadow:0 12px 40px rgba(0,0,0,.08);
-            margin-bottom:24px;
-            text-align:left;
+            padding:28px;
+            box-shadow:
+            0 12px 40px rgba(0,0,0,.08);
         }
-        .design-preview{
-            width:100%;
-            border-radius:16px;
-            display:block;
-            margin-bottom:18px;
-        }
-        .design-title{
-            font-size:17px;
-            font-weight:600;
+        h2{
+            font-size:24px;
+            margin-bottom:28px;
             color:#222;
-            margin-bottom:16px;
         }
-        .download-row{
+        .download{
             display:flex;
-            gap:12px;
+            justify-content:space-between;
+            align-items:center;
+            padding:18px 0;
+            border-bottom:1px solid #ececec;
+        }
+        .download:last-child{
+            border-bottom:none;
+        }
+        .device{
+            font-size:18px;
+            font-weight:500;
         }
         .btn{
-            flex:1;
             background:#222;
             color:white;
             text-decoration:none;
-            padding:12px 0;
+            padding:10px 22px;
             border-radius:999px;
             font-size:15px;
-            text-align:center;
             transition:.25s;
         }
         .btn:hover{
             background:#000;
         }
         .quote{
-            margin-top:20px;
+            margin-top:60px;
             font-size:24px;
             font-weight:300;
             color:#444;
@@ -106,6 +106,9 @@
             .quote{
                 font-size:21px;
             }
+            .device{
+                font-size:17px;
+            }
         }
     </style>
 </head>
@@ -115,54 +118,27 @@
     <h1>Welcome, Founding Member</h1>
     <div class="intro">
         Thank you for being one of the first 100 people to download <strong>Freed</strong>.<br><br>
-        As a small thank-you, choose your favorite wallpaper inspired by the practice of letting go.
+        As a small thank-you, here's an exclusive wallpaper inspired by the practice of letting go.
     </div>
-
-    <div class="design-card">
-        <img class="design-preview" src="img1-iphone.jpg" alt="Let things happen; allow life to be.">
-        <div class="design-title">Let things happen; allow life to be.</div>
-        <div class="download-row">
-            <a class="btn" href="img1-iphone.jpg" download>📱 iPhone</a>
-            <a class="btn" href="img1-android.jpg" download>🤖 Android</a>
+    <div class="card">
+        <h2>Choose your device</h2>
+        <div class="download">
+            <div class="device">📱 iPhone</div>
+            <a class="btn"
+               href="iphone-wallpaper.jpg"
+               download>
+                Download
+            </a>
+        </div>
+        <div class="download">
+            <div class="device">🤖 Android</div>
+            <a class="btn"
+               href="android-wallpaper.jpg"
+               download>
+                Download
+            </a>
         </div>
     </div>
-
-    <div class="design-card">
-        <img class="design-preview" src="img2-iphone.jpg" alt="Be not the doer. Be the witness.">
-        <div class="design-title">Be not the doer. Be the witness.</div>
-        <div class="download-row">
-            <a class="btn" href="img2-iphone.jpg" download>📱 iPhone</a>
-            <a class="btn" href="img2-android.jpg" download>🤖 Android</a>
-        </div>
-    </div>
-
-    <div class="design-card">
-        <img class="design-preview" src="img3-iphone.jpg" alt="仅仅通过释放得到一切">
-        <div class="design-title">仅仅通过释放，得到一切</div>
-        <div class="download-row">
-            <a class="btn" href="img3-iphone.jpg" download>📱 iPhone</a>
-            <a class="btn" href="img3-android.jpg" download>🤖 Android</a>
-        </div>
-    </div>
-
-    <div class="design-card">
-        <img class="design-preview" src="img4-iphone.jpg" alt="不做行动者，做见证者。">
-        <div class="design-title">不做行动者，做见证者。</div>
-        <div class="download-row">
-            <a class="btn" href="img4-iphone.jpg" download>📱 iPhone</a>
-            <a class="btn" href="img4-android.jpg" download>🤖 Android</a>
-        </div>
-    </div>
-
-    <div class="design-card">
-        <img class="design-preview" src="img5-iphone.jpg" alt="允许一切发生；允许生活本来的样子。">
-        <div class="design-title">允许一切发生；允许生活本来的样子。</div>
-        <div class="download-row">
-            <a class="btn" href="img5-iphone.jpg" download>📱 iPhone</a>
-            <a class="btn" href="img5-android.jpg" download>🤖 Android</a>
-        </div>
-    </div>
-
     <div class="quote">
         Every unlock is a chance to let go.
     </div>
