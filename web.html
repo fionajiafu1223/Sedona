@@ -1376,5 +1376,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+<script>
+(function() {
+  var params = new URLSearchParams(location.search);
+  if (params.get('paywall') === '1') {
+    var tryOpen = setInterval(function() {
+      if (typeof FreedPaywall !== 'undefined' && FreedPaywall.showPaywall) {
+        clearInterval(tryOpen);
+        FreedPaywall.showPaywall(null);
+      }
+    }, 100);
+  }
+})();
+</script>
 </body>
 </html>
