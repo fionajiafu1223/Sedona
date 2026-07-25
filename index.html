@@ -1013,6 +1013,10 @@ const io = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 </script>
 
+<button id="to-top" aria-label="回到顶部">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</button>
+
 <script>
 (function(){
   const canvas = document.getElementById('seabg');
@@ -1132,10 +1136,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   t.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
 })();
 </script>
-
-<button id="to-top" aria-label="回到顶部">
-  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-</button>
 
 </body>
 </html>
