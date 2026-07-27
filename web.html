@@ -1389,5 +1389,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 })();
 </script>
+  <script>
+(function() {
+  var params = new URLSearchParams(location.search);
+  if (params.get('login') === '1') {
+    var tryOpen = setInterval(function() {
+      if (typeof openAuth === 'function') {
+        clearInterval(tryOpen);
+        switchAuthTab('login');
+        openAuth();
+      }
+    }, 100);
+  }
+})();
+</script>
 </body>
 </html>
