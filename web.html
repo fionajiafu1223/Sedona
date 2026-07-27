@@ -1035,16 +1035,30 @@ const _origDraw = draw;
           }
         }
 
-        showMsg('注册成功 🌊', 'success');
-        setTimeout(() => { closeAuth(); refreshAuthUI(); }, 800);
+showMsg('注册成功 🌊', 'success');
+setTimeout(() => {
+  closeAuth();
+  refreshAuthUI();
+  var params = new URLSearchParams(window.location.search);
+  var redirectTo = params.get('redirect');
+  if (redirectTo) { window.location.href = decodeURIComponent(redirectTo); }
+}, 800);
+
 
       } else {
         // 登录
         const { error } = await supa.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
-        showMsg('登录成功 ✨', 'success');
-        setTimeout(() => { closeAuth(); refreshAuthUI(); }, 600);
+showMsg('登录成功 ✨', 'success');
+      setTimeout(() => {
+        closeAuth();
+        refreshAuthUI();
+        var params = new URLSearchParams(window.location.search);
+        var redirectTo = params.get('redirect');
+        if (redirectTo) { window.location.href = decodeURIComponent(redirectTo); }
+      }, 600);
+
       }
     } catch (err) {
       // 友好错误信息
