@@ -11,11 +11,39 @@
 
   const WORKER_URL = 'https://api.freedreleasing.com';
 
+  // 默认价格（人民币），在拿到 /pricing 接口结果之前先用这个兜底显示
   const PLANS = [
     { id:'monthly',   label:'月度会员', sublabel:'Monthly',   price:'¥8',  period:'/ 月', badge:null,        highlight:false },
     { id:'yearly',    label:'年度会员', sublabel:'Annual',    price:'¥68', period:'/ 年', badge:'最划算 省29%', highlight:true  },
     { id:'quarterly', label:'季度会员', sublabel:'Quarterly', price:'¥18', period:'/ 季', badge:'省25%',      highlight:false },
   ];
+
+  let _pricingFetched = false;
+
+  // ─── 根据访问者所在地区，向 Worker 请求对应货币价格，更新 PLANS 里显示的数字 ───
+  async function fetchRegionalPricing() {
+    if (_pricingFetched) return; // 一个页面只需要请求一次
+    try {
+      const res = await fetch(`${WORKER_URL}/pricing`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const symbol = data.symbol || '¥';
+      const monthlyPlan = PLANS.find(p => p.id === 'monthly');
+      const quarterlyPlan = PLANS.find(p => p.id === 'quarterly');
+      const yearlyPlan = PLANS.find(p => p.id === 'yearly');
+      if (monthlyPlan && data.monthly != null) monthlyPlan.price = symbol + formatAmount(data.monthly);
+      if (quarterlyPlan && data.quarterly != null) quarterlyPlan.price = symbol + formatAmount(data.quarterly);
+      if (yearlyPlan && data.yearly != null) yearlyPlan.price = symbol + formatAmount(data.yearly);
+      _pricingFetched = true;
+    } catch (_) {
+      // 请求失败就保留默认的人民币价格显示，不影响弹窗正常打开
+    }
+  }
+
+  // 格式化金额：整数不带小数点，非整数保留原样（比如 14.9、19.99）
+  function formatAmount(n) {
+    return Number.isInteger(n) ? String(n) : String(n);
+  }
 
   const FEATURES_FREE = ['情绪释放', '欲望释放', '目标表（最多3个）'];
   const FEATURES_PAID_LEFT = [
@@ -246,9 +274,10 @@
     document.head.appendChild(style);
   }
 
-  function showPaywall(onGranted) {
+  async function showPaywall(onGranted) {
     injectStyles();
     _onGrantedCallback = onGranted;
+    await fetchRegionalPricing(); // 先拿到访问者所在地区的价格，再渲染弹窗内容
     _selectedPlan = PLANS[0];
 
     const overlay = document.createElement('div');

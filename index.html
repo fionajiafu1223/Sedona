@@ -886,7 +886,7 @@ body.lang-en .foot-brand .zh-name{font-size:1rem;color:#fff!important}
         <div class="head-row">
           <span class="plan-name"><span class="zh">月度</span><span class="en">Monthly</span></span>
         </div>
-        <div class="price"><small>¥</small>8</div>
+        <div class="price" id="price-monthly"><small>¥</small>8</div>
         <div class="per"><span class="zh">每月</span><span class="en">per month</span></div>
         <div class="trial"><span class="zh">7 天免费试用</span><span class="en">7-day free trial</span></div>
         <a class="plan-btn" href="web.html?paywall=1&plan=monthly"><span class="zh">开始 7 天免费试用</span><span class="en">Start 7-day free trial</span></a>
@@ -896,7 +896,7 @@ body.lang-en .foot-brand .zh-name{font-size:1rem;color:#fff!important}
           <span class="plan-name"><span class="zh">季度</span><span class="en">Quarterly</span></span>
           <span class="save"><span class="zh">省 25%</span><span class="en">Save 25%</span></span>
         </div>
-        <div class="price"><small>¥</small>18</div>
+        <div class="price" id="price-quarterly"><small>¥</small>18</div>
         <div class="per"><span class="zh">每三个月</span><span class="en">per 3 months</span></div>
         <div class="trial"><span class="zh">7 天免费试用</span><span class="en">7-day free trial</span></div>
         <a class="plan-btn" href="web.html?paywall=1&plan=quarterly"><span class="zh">开始 7 天免费试用</span><span class="en">Start 7-day free trial</span></a>
@@ -906,7 +906,7 @@ body.lang-en .foot-brand .zh-name{font-size:1rem;color:#fff!important}
           <span class="plan-name"><span class="zh">年度</span><span class="en">Annual</span></span>
           <span class="save"><span class="zh">最划算 · 省 29%</span><span class="en">Best value · 29%</span></span>
         </div>
-        <div class="price"><small>¥</small>68</div>
+        <div class="price" id="price-yearly"><small>¥</small>68</div>
         <div class="per"><span class="zh">每年</span><span class="en">per year</span></div>
         <div class="trial"><span class="zh">7 天免费试用</span><span class="en">7-day free trial</span></div>
         <a class="plan-btn" href="web.html?paywall=1&plan=yearly"><span class="zh">开始 7 天免费试用</span><span class="en">Start 7-day free trial</span></a>
@@ -1134,6 +1134,24 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   onS();
   window.addEventListener('scroll', onS, {passive:true});
   t.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+})();
+
+// 根据访问者所在地区，动态更新首页价格区块显示的货币和数字
+(function() {
+  fetch('https://api.freedreleasing.com/pricing')
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      if (!data) return;
+      const symbol = data.symbol || '¥';
+      const setPrice = (id, amount) => {
+        const el = document.getElementById(id);
+        if (el && amount != null) el.innerHTML = `<small>${symbol}</small>${amount}`;
+      };
+      setPrice('price-monthly', data.monthly);
+      setPrice('price-quarterly', data.quarterly);
+      setPrice('price-yearly', data.yearly);
+    })
+    .catch(() => { /* 请求失败就保留页面默认的人民币价格 */ });
 })();
 </script>
 
