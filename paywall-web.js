@@ -19,6 +19,7 @@
   ];
 
   let _pricingFetched = false;
+  let _userCountry = null;
 
   // ─── 根据访问者所在地区，向 Worker 请求对应货币价格，更新 PLANS 里显示的数字 ───
   async function fetchRegionalPricing() {
@@ -27,6 +28,7 @@
       const res = await fetch(`${WORKER_URL}/pricing`);
       if (!res.ok) return;
       const data = await res.json();
+      _userCountry = data.country || null;
       const symbol = data.symbol || '¥';
       const monthlyPlan = PLANS.find(p => p.id === 'monthly');
       const quarterlyPlan = PLANS.find(p => p.id === 'quarterly');
@@ -328,7 +330,7 @@
               </div>
             </div>`).join('')}
         </div>
-        <div class="pw-trial-note">7天免费试用，到期后自动续费，<span id="pw-manage-link" style="text-decoration:underline;cursor:pointer;">可随时取消</span></div>
+        <div class="pw-trial-note">${_userCountry === 'CN' ? '信用卡支付享7天免费试用；支付宝/微信支付即时生效，到期后需重新购买' : '7天免费试用，到期后自动续费，<span id="pw-manage-link" style="text-decoration:underline;cursor:pointer;">可随时取消</span>'}</div>
         <button class="pw-btn" id="pw-buy-btn">立即订阅</button>
         <div class="pw-msg" id="pw-msg"></div>
       </div>
