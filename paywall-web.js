@@ -4,7 +4,8 @@
 //           checkPremium() — 返回 Promise<boolean>
 // 说明：UI 和 checkPremium() 逻辑与 App 端 paywall.js 保持一致，
 //      仅将购买流程从 RevenueCat 原生插件改为 Stripe Checkout（网页跳转）
-// 版本：2026-07-23（修复：登录跳转目标 index.html -> web.html）
+// 版本：2026-08-18（新增：checkPremium 查询失败时自动上报诊断信息到后台，
+//                    方便远程排查"付了款但显示不是会员"这类问题，不影响界面）
 
 (function() {
   'use strict';
@@ -57,12 +58,50 @@
     { label: '收获本', items: ['收获记录'] },
   ];
 
+  // ─── 缓存说明（本次修复的核心） ───────────────────────────
+  // _premiumCache 记录"上一次成功查询"到的结果；null 表示还没有任何成功查询过。
+  // _cacheTime 只在成功查询时更新，用来判断缓存是否在 5 分钟有效期内。
+  // 关键改动：网络请求失败/超时/接口报错时，不再把结果强制写成 false 并计入缓存有效期，
+  // 而是"保留上一次已知的结果"（如果有），并让下一次调用立刻重新尝试查询，
+  // 不需要用户手动刷新页面等 5 分钟窗口过去。
   let _premiumCache = null;
   let _paymentIssueCache = false;
   let _cacheTime = 0;
   const CACHE_TTL = 5 * 60 * 1000;
   let _selectedPlan = PLANS[0];
   let _onGrantedCallback = null;
+
+  // ─── 新增：悄悄上报诊断信息，不影响用户看到的任何界面 ───────
+  // 用一个不会阻塞、不会抛错的 GET 请求，把 checkPremium 失败的真实原因
+  // 发给后台记录下来。即使这个上报请求本身也失败了，也完全静默忽略，
+  // 绝不能因为诊断上报本身出问题而影响正常的付费墙逻辑。
+  function reportCheckFailure(reason, detail) {
+    try {
+      const params = new URLSearchParams();
+      params.set('reason', reason);
+      if (detail && detail.status) params.set('status', String(detail.status));
+      if (detail && detail.msg) params.set('msg', String(detail.msg).slice(0, 200));
+      const uid = getTokenUserIdForDiagnostics();
+      if (uid) params.set('uid', uid);
+      fetch(`${WORKER_URL}/log-error?${params.toString()}`, { method: 'GET' }).catch(function(){});
+    } catch (_) {
+      // 诊断上报本身出错也完全忽略，不影响任何正常流程
+    }
+  }
+
+  // 尝试从本地 token 里解析出 user id，仅用于诊断记录，解析失败就不带这个字段
+  function getTokenUserIdForDiagnostics() {
+    try {
+      const token = getToken();
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return (payload && payload.sub) || null;
+    } catch (_) {
+      return null;
+    }
+  }
 
   // ─── 与 App 端完全一致：从 localStorage 读 Supabase token ───
   function getToken() {
@@ -85,23 +124,42 @@
     return null;
   }
 
-  // ─── 与 App 端完全一致：查询 /subscription/status ───
+  // ─── 与 App 端基本一致：查询 /subscription/status ───
+  // 改动点：请求失败/无 token 时不再写入 _premiumCache/_cacheTime，
+  // 这样下次调用会重新尝试查询，而不是被"假的非会员结果"缓存 5 分钟。
   async function checkPremium(forceRefresh) {
     const now = Date.now();
     if (!forceRefresh && _premiumCache !== null && (now - _cacheTime) < CACHE_TTL) return _premiumCache;
+
     const token = getToken();
-    if (!token) { _premiumCache = false; _paymentIssueCache = false; _cacheTime = now; return false; }
+    if (!token) {
+      // 没有 token：如果之前没有过成功的查询结果，就按未登录处理返回 false，
+      // 但不写入缓存 —— 一旦 token 稍后加载出来，下次调用会重新查，不受 5 分钟限制。
+      reportCheckFailure('no_token');
+      return _premiumCache !== null ? _premiumCache : false;
+    }
+
     try {
       const res = await fetch(`${WORKER_URL}/subscription/status`, {
         method: 'GET', headers: { 'Authorization': `Bearer ${token}` },
       });
-      if (!res.ok) { _premiumCache = false; _paymentIssueCache = false; _cacheTime = now; return false; }
+      if (!res.ok) {
+        // 接口返回错误（比如 401 token 过期、500 等）：同样不写入缓存，
+        // 保留上一次已知结果作为兜底显示，避免网络抖动直接把会员打回付费墙。
+        reportCheckFailure('http_error', { status: res.status });
+        return _premiumCache !== null ? _premiumCache : false;
+      }
       const data = await res.json();
       _premiumCache = data.is_premium === true;
       _paymentIssueCache = data.payment_issue === true;
       _cacheTime = now;
       return _premiumCache;
-    } catch(_) { _premiumCache = false; _paymentIssueCache = false; _cacheTime = now; return false; }
+    } catch(err) {
+      reportCheckFailure('network_error', { msg: err && err.message });
+      // 网络请求本身失败（超时/断网/DNS等）：不写入缓存，保留旧结果兜底，
+      // 下次调用（比如切换页面、下次点击）会立刻重新尝试，不用等 5 分钟或手动刷新好几次。
+      return _premiumCache !== null ? _premiumCache : false;
+    }
   }
 
   // 是否存在扣款问题（需先调用过 checkPremium，缓存共享）
