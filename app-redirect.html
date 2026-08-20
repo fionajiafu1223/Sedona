@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Freed</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body {
+    width:100%; height:100%;
+    background:#0d4870;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Noto Sans SC', sans-serif;
+  }
+  .msg {
+    color:rgba(220,240,255,0.85);
+    font-size:0.85rem;
+    text-align:center;
+    letter-spacing:0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="msg">正在返回 Freed App…</div>
+<script>
+  // 从当前地址栏参数里，把 Stripe 传回来的东西原样转发给 App
+  // 例：?type=success&session_id=cs_xxx  或  ?type=cancel
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type'); // 'success' 或 'cancel'
+  const sessionId = params.get('session_id') || '';
+
+  let target;
+  if (type === 'success') {
+    target = 'freed://payment-success?session_id=' + encodeURIComponent(sessionId);
+  } else {
+    target = 'freed://payment-cancel';
+  }
+
+  // 立刻跳转，唤起 App
+  window.location.href = target;
+</script>
+</body>
+</html>
