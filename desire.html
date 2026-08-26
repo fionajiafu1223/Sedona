@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>欲望释放 · Freed Releasing</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400&display=swap');
@@ -18,6 +18,7 @@
   /* ── SKY CLOUDS ── */
   .sky-clouds {
     position: fixed; top: 0; left: 0;
+    padding-top: max(22px, calc(env(safe-area-inset-top, 0px) + 8px));
     width: 100%; height: 100%;
     pointer-events: none; z-index: 1;
     overflow: hidden;
@@ -363,7 +364,7 @@
 
   /* ── MUSIC BUTTON & PANEL ── */
   .music-btn {
-    position: fixed; top: 16px; right: 16px; z-index: 600;
+    position: fixed; top: max(22px, calc(env(safe-area-inset-top, 0px) + 8px)); right: calc(env(safe-area-inset-right, 0px) + 12px); z-index: 600;
     width: 36px; height: 36px; border-radius: 50%;
     background: rgba(255,255,255,0.2); backdrop-filter: blur(12px);
     border: 1.5px solid rgba(255,255,255,0.35);
@@ -386,7 +387,7 @@
     to   { transform: rotate(360deg); }
   }
   .music-panel {
-    position: fixed; top: 64px; right: 12px; z-index: 590;
+    position: fixed; top: max(72px, calc(env(safe-area-inset-top, 0px) + 58px)); right: 12px; z-index: 590;
     width: min(390px, 90vw);
     background: rgba(22,48,100,0.93); backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
@@ -716,7 +717,7 @@
   /* ── MENU BUTTON ── */
   .menu-btn {
     display: none !important;
-    position: fixed; top: 16px; left: 16px; z-index: 600;
+    position: fixed; top: max(22px, calc(env(safe-area-inset-top, 0px) + 8px)); left: calc(env(safe-area-inset-left, 0px) + 12px); z-index: 600;
     width: 42px; height: 42px; border-radius: 50%;
     background: rgba(255,255,255,0.2); backdrop-filter: blur(12px);
     border: 1.5px solid rgba(255,255,255,0.35);
@@ -831,6 +832,43 @@
     transition: color 0.15s, transform 0.15s;
   }
   .modal-close:hover { color: #0e2840; transform: scale(1.2); }
+
+  /* 录音命名弹窗 */
+  .rename-modal-box {
+    background: linear-gradient(145deg, rgba(240,250,255,0.98), rgba(220,238,255,0.96));
+    border-radius: 20px; padding: 20px 18px;
+    width: min(360px, 92vw);
+    box-shadow: 0 16px 56px rgba(0,40,100,0.24);
+    font-family: 'Noto Serif SC', serif; position: relative;
+    transform: translateY(16px) scale(0.95);
+    transition: transform 0.25s ease;
+  }
+  .modal-overlay.open .rename-modal-box { transform: translateY(0) scale(1); }
+  .rename-modal-title {
+    font-size: 0.95rem; font-weight: 600; color: #0e3050;
+    letter-spacing: 0.08em; text-align: center; margin-bottom: 14px;
+  }
+  .rename-modal-input {
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    border: 1.5px solid rgba(74,159,212,0.35); background: #fff;
+    font-family: 'Noto Sans SC', sans-serif; font-size: 0.88rem;
+    color: #1a3a5a; box-sizing: border-box; margin-bottom: 14px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .rename-modal-input:focus { border-color: #4a9fd4; }
+  .rename-modal-actions { display: flex; gap: 10px; }
+  .rename-modal-btn {
+    flex: 1; padding: 10px; border-radius: 12px; border: none;
+    font-family: 'Noto Serif SC', serif; font-size: 0.85rem;
+    cursor: pointer; transition: opacity 0.18s, transform 0.12s;
+  }
+  .rename-modal-btn:hover { opacity: 0.85; transform: scale(1.02); }
+  .rename-modal-btn.confirm {
+    background: linear-gradient(135deg, #4a9fd4, #3ab8a0); color: #fff;
+  }
+  .rename-modal-btn.cancel {
+    background: rgba(160,190,220,0.18); color: #5a7aa0;
+  }
 
   /* Tabbed header inside modal */
   .modal-tabs {
@@ -1046,6 +1084,19 @@
     color: rgba(255,255,255,0.9); letter-spacing: 0.04em; line-height: 1.6;
     text-shadow: 0 1px 8px rgba(0,30,100,0.5);
   }
+  .queue-return-btn {
+    margin-top: 10px; padding: 9px 24px; border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: #fff; font-family: 'Noto Serif SC', serif; font-size: 0.82rem;
+    letter-spacing: 0.08em; cursor: pointer; pointer-events: auto;
+    box-shadow: 0 4px 16px rgba(0,20,60,0.25), inset 0 1px 0 rgba(255,255,255,0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .queue-return-btn:hover  { background: rgba(255,255,255,0.28); transform: scale(1.05); }
+  .queue-return-btn:active { background: rgba(255,255,255,0.14); transform: scale(0.95); }
 </style>
 </head>
 <body>
@@ -1093,6 +1144,7 @@
 <div class="queue-guidance" id="queueGuidance">
   <div class="queue-guidance-step" id="queueStep"></div>
   <div class="queue-guidance-text" id="queueText"></div>
+  <button class="queue-return-btn" id="queueReturnBtn" style="display:none;" onclick="returnToBlockPoint()"></button>
 </div>
 
 <!-- Lang Toggle -->
@@ -1223,6 +1275,17 @@
         <button class="record-action-btn record-discard-btn" onclick="discardRecording()">✕ 丢弃</button>
       </div>
       <div class="record-hint">录制时麦克风声音与背景音将混合为一个文件</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="renameOverlay" onclick="if(event.target===this) cancelRenameRecording()">
+    <div class="rename-modal-box">
+      <div class="rename-modal-title">🎙️ 给这段录音命名</div>
+      <input type="text" class="rename-modal-input" id="renameInput" maxlength="30" placeholder="例如：关于父母的释放">
+      <div class="rename-modal-actions">
+        <button class="rename-modal-btn cancel" onclick="cancelRenameRecording()">取消</button>
+        <button class="rename-modal-btn confirm" onclick="confirmRenameRecording()">保存</button>
+      </div>
     </div>
   </div>
 
@@ -1418,6 +1481,8 @@ const STRINGS = {
     asst_submit:'✨ 分析', asst_loading:'正在感受你的文字…',
     asst_go:'🫧 去释放这些想要',
     queue_done:'✨ 所有想要已释放完毕',
+    queue_done_return_text:'还有信念或想法卡住你吗？',
+    queue_done_return_btn:'🫧 返回卡点释放',
     toast_goal_set:'🌊 目标已设定，开始释放吧',
     toast_dropped:'✨ 目标已掉落并记录到收获本',
     toast_no_result:'还没有分析结果', toast_no_input:'请先写下你的感受',
@@ -1454,6 +1519,8 @@ const STRINGS = {
     asst_submit:'✨ Analyse', asst_loading:'Reading your words…',
     asst_go:'🫧 Release these desires',
     queue_done:'✨ All desires released',
+    queue_done_return_text:'Any beliefs or thoughts still holding you back?',
+    queue_done_return_btn:'🫧 Back to Blocking Point Release',
     toast_goal_set:'🌊 Goal set — start releasing',
     toast_dropped:'✨ Goal dropped and saved to Insights',
     toast_no_result:'No analysis yet', toast_no_input:'Please write your feelings first',
@@ -1667,15 +1734,22 @@ function vh()     { return window.innerHeight; }
 // All physics constants are defined per 60fps frame.
 // Delta-time scaling normalises them to actual elapsed time,
 // so behaviour is identical on 60 / 90 / 120 / 144 Hz screens.
-const BUOYANCY    = 0.006;   // per 60fps frame
+// 以 iPad Pro 13" (1376pt 宽) 为基准，所有平台/设备按屏幕宽度统一缩放，
+// 让视觉速度感与基准设备（iPad Pro 13"）保持一致。
+// 只缩放整体漂浮速度相关参数；碰撞修正力（REPULSION/WALL_REP）保持不变，
+// 避免缩放后与固定的碰撞距离阈值产生数值震荡（气泡颤抖）。
+const REFERENCE_WIDTH = 1376;
+const screenScale = Math.min(1, vw() / REFERENCE_WIDTH);
+const BUOYANCY    = 0.006 * screenScale;
+const MAX_SPD     = 0.8 * screenScale;
 const DAMPING     = 0.92;    // per 60fps frame (converted to per-dt below)
-const REPULSION   = 120;     // per 60fps frame
-const WALL_REP    = 80;      // per 60fps frame
+const REPULSION   = 120;
+const WALL_REP    = 80;
 const WALL_MARGIN = 6;
 const TARGET_FPS  = 60;
 const TARGET_DT   = 1000 / TARGET_FPS;  // 16.667 ms
 // Max speed in px per 60fps-equivalent frame
-const MAX_SPD     = 0.8;
+
 
 let   frameCount  = 0;
 let   lastPhysicsTime = null;
@@ -2580,6 +2654,7 @@ async function runAssistant() {
 let releaseQueue    = [];   // remaining points to release
 let queueActive     = false;
 let awaitingDecision = false;
+let queueFromExternalAssistant = false;   // true if this queue came from assistant.html via sessionStorage handoff
 
 function startReleaseQueue() {
   if (!asstPoints.length) { showToast(t('toast_no_result')); return; }
@@ -2642,8 +2717,21 @@ function endQueue() {
   queueActive = false;
   awaitingDecision = false;
   releaseQueue = [];
-  document.getElementById('queueGuidance').classList.remove('show');
-  showToast(t('queue_done'));
+  if (queueFromExternalAssistant) {
+    document.getElementById('queueStep').textContent = '';
+    document.getElementById('queueText').textContent = t('queue_done_return_text');
+    const btn = document.getElementById('queueReturnBtn');
+    btn.textContent = t('queue_done_return_btn');
+    btn.style.display = 'inline-block';
+    document.getElementById('queueGuidance').classList.add('show');
+  } else {
+    document.getElementById('queueGuidance').classList.remove('show');
+    showToast(t('queue_done'));
+  }
+}
+
+function returnToBlockPoint() {
+  window.location.href = 'assistant.html?openBlockPoint=1';
 }
 
 // ── Hook into handleDecision to advance queue after each choice ──
@@ -3162,9 +3250,17 @@ function toggleMusicPanel() {
 }
 
 document.addEventListener('click', e => {
-  if (musicPanelOpen && !e.target.closest('#musicPanel') && !e.target.closest('#musicBtn')) {
+  if (!musicPanelOpen) return;
+  const panel = document.getElementById('musicPanel');
+  const btn = document.getElementById('musicBtn');
+  const panelRect = panel.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  const x = e.clientX, y = e.clientY;
+  const insidePanel = x >= panelRect.left && x <= panelRect.right && y >= panelRect.top && y <= panelRect.bottom;
+  const insideBtn = x >= btnRect.left && x <= btnRect.right && y >= btnRect.top && y <= btnRect.bottom;
+  if (!insidePanel && !insideBtn) {
     musicPanelOpen = false;
-    document.getElementById('musicPanel').classList.remove('open');
+    panel.classList.remove('open');
   }
 });
 
@@ -3187,6 +3283,7 @@ function switchMusicSource(src) {
   });
   // Init waveform bars on first visit
   if (src === 'record') initRecordWaveform();
+  if (src === 'import') renderImportedList();
 }
 
 // ═══════════════════════════════════════════════════
@@ -3195,6 +3292,32 @@ function switchMusicSource(src) {
 // importedTracks: [{id, name, src, objectUrl?}]
 const importedTracks = [];
 let importAudioEl    = null; // single <audio> element for imported/recorded playback
+
+// ── 持久化：localStorage ──
+function saveTracksToStorage() {
+  try {
+    const toSave = importedTracks.filter(t => t.base64)
+      .map(t => ({ id: t.id, name: t.name, base64: t.base64, mime: t.mime }));
+    localStorage.setItem('freed_desire_recorded_tracks', JSON.stringify(toSave));
+  } catch(e) {}
+}
+function loadTracksFromStorage() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('freed_desire_recorded_tracks') || '[]');
+    saved.forEach(t => {
+      try {
+        const byteString = atob(t.base64.split(',')[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+        const blob = new Blob([ab], { type: t.mime || 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        importedTracks.push({ id: t.id, name: t.name, src: url, base64: t.base64, mime: t.mime });
+      } catch(e) {}
+    });
+  } catch(e) {}
+}
+loadTracksFromStorage();
 let currentImportId  = null;
 
 function ensureImportAudio() {
@@ -3251,15 +3374,20 @@ function renderImportedList() {
   }
   list.innerHTML = importedTracks.map(track => `
     <div class="music-imported-item ${currentImportId===track.id?'active':''}"
-         id="itrack-${track.id}" onclick="selectImportTrack('${track.id}')">
-      <span style="font-size:1.1rem;flex-shrink:0;">${currentImportId===track.id ? '▶' : '🎵'}</span>
+         id="itrack-${track.id}" onclick="selectImportTrack('${track.id}', event)">
+      <button class="music-play-btn ${currentImportId===track.id && musicPlaying ? 'playing' : ''}" 
+              style="flex-shrink:0;width:28px;height:28px;font-size:0.75rem;" 
+              onclick="selectImportTrack('${track.id}', event)">
+        ${currentImportId===track.id && musicPlaying ? '⏹' : '▶'}
+      </button>
       <span class="music-imported-name" title="${escapeHtml(track.name)}">${escapeHtml(track.name)}</span>
       <button class="music-imported-del" onclick="deleteImportTrack(event,'${track.id}')">✕</button>
     </div>
   `).join('');
 }
 
-function selectImportTrack(id) {
+function selectImportTrack(id, event) {
+  if (event) event.stopPropagation();
   ensureImportAudio();
   if (currentImportId === id && musicPlaying && currentTrack === '__import__') {
     // toggle off
@@ -3299,6 +3427,7 @@ function deleteImportTrack(e, id) {
   const track = importedTracks[idx];
   if (track.objectUrl) URL.revokeObjectURL(track.objectUrl);
   importedTracks.splice(idx, 1);
+  saveTracksToStorage();
   renderImportedList();
 }
 
@@ -3524,30 +3653,71 @@ let recordPreviewEl = null;
 
 function playRecording() {
   if (!recordObjectUrl) return;
+  const btn = document.querySelector('.record-play-btn');
   if (!recordPreviewEl) recordPreviewEl = new Audio();
   if (!recordPreviewEl.paused) {
     recordPreviewEl.pause();
     recordPreviewEl.currentTime = 0;
+    if (btn) btn.textContent = '▶ 试听';
     return;
   }
   recordPreviewEl.src = recordObjectUrl;
+  recordPreviewEl.onended = function() { if (btn) btn.textContent = '▶ 试听'; };
   recordPreviewEl.play().catch(() => {});
+  if (btn) btn.textContent = '⏹ 停止';
 }
 
 function saveRecording() {
   if (!recordObjectUrl) return;
-  const id  = 'rec-' + Date.now();
+  // 停止试听
+  if (recordPreviewEl) {
+    try { recordPreviewEl.pause(); recordPreviewEl.src = ''; } catch(_) {}
+    recordPreviewEl = null;
+  }
+  const btn = document.querySelector('.record-play-btn');
+  if (btn) btn.textContent = '▶ 试听';
+  // 生成默认建议名，预填到输入框，用户可直接用或修改
   const dur = String(Math.floor(recordTimerSec/60)).padStart(2,'0') + ':' + String(recordTimerSec%60).padStart(2,'0');
   const bgName = recordBgTrack
     ? document.querySelector(`.record-bg-item[data-track="${recordBgTrack}"] .record-bg-name`)?.textContent
     : '';
-  const name = bgName ? `🎙️ 录音+${bgName} ${dur}` : `🎙️ 我的录音 ${dur}`;
-  importedTracks.push({ id, name, src: recordObjectUrl });
-  switchMusicSource('import');
-  renderImportedList();
-  selectImportTrack(id);
+  const defaultName = bgName ? `🎙️ 录音+${bgName} ${dur}` : `🎙️ 我的录音 ${dur}`;
+  const input = document.getElementById('renameInput');
+  input.value = defaultName;
+  document.getElementById('renameOverlay').classList.add('open');
+  setTimeout(() => { input.focus(); input.select(); }, 100);
+}
 
-  // Reset record UI
+function cancelRenameRecording() {
+  document.getElementById('renameOverlay').classList.remove('open');
+}
+
+function confirmRenameRecording() {
+  const input = document.getElementById('renameInput');
+  const name = input.value.trim() || input.placeholder;
+  document.getElementById('renameOverlay').classList.remove('open');
+  const id  = 'rec-' + Date.now();
+  // 保存 URL 到 track，转 base64 持久化
+  const mime = recordBlob ? recordBlob.type : 'audio/webm';
+  const srcUrl = recordObjectUrl;
+  recordObjectUrl = null;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    importedTracks.push({ id, name, src: srcUrl, base64, mime });
+    saveTracksToStorage();
+    switchMusicSource('import');
+    renderImportedList();
+    selectImportTrack(id);
+  };
+  if (recordBlob) {
+    reader.readAsDataURL(recordBlob);
+  } else {
+    importedTracks.push({ id, name, src: srcUrl });
+    switchMusicSource('import');
+    renderImportedList();
+    selectImportTrack(id);
+  }
   document.getElementById('recordBtn').classList.remove('has-recording');
   document.getElementById('recordActions').style.display = 'none';
   document.getElementById('recordStatus').textContent = '已保存，正在播放混音';
@@ -3557,6 +3727,13 @@ function saveRecording() {
 }
 
 function discardRecording() {
+  // 停止试听
+  if (recordPreviewEl) {
+    try { recordPreviewEl.pause(); recordPreviewEl.src = ''; } catch(_) {}
+    recordPreviewEl = null;
+  }
+  const btn = document.querySelector('.record-play-btn');
+  if (btn) btn.textContent = '▶ 试听';
   if (recordObjectUrl) { URL.revokeObjectURL(recordObjectUrl); recordObjectUrl = null; }
   recordBlob = null; recordChunks = [];
   document.getElementById('recordBtn').classList.remove('has-recording');
@@ -3583,6 +3760,7 @@ window.addEventListener('load', function() {
         var points = JSON.parse(queueData);
         if (points && points.length && typeof startReleaseQueue === 'function') {
           asstPoints = points;
+          queueFromExternalAssistant = true;
           startReleaseQueue();
           return;
         }
