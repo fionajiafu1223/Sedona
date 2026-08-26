@@ -188,7 +188,7 @@ body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',ser
 .back-btn:active { transform: scale(0.96); }
 </style></head>
 <body>
-<button class="back-btn" onclick="window.location.href='web.html?nav=main'">返回</button>
+<button class="back-btn" onclick="window.location.href='web.html'">返回</button>
 
 <script>
 (function() {
@@ -376,7 +376,11 @@ draw();
   <iframe class="panel-iframe" id="iframe-allowance" src="" allowfullscreen></iframe>
 </div>
 
-<script src="paywall-web.js"></script>
+<!-- <script src="paywall-web.js"></script> -->
+<script>
+// 测试期间临时放行付费墙
+function requirePremium(cb) { cb(); }
+</script>
 <script>
 const DESIRE_INFO = {
   control:{label:'想要控制',cls:'bc'},
