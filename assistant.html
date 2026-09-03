@@ -188,7 +188,6 @@ body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',ser
 .back-btn:active { transform: scale(0.96); }
 </style></head>
 <body>
-<button class="back-btn" onclick="window.location.href='web.html'">返回</button>
 
 <script>
 (function() {
@@ -376,11 +375,7 @@ draw();
   <iframe class="panel-iframe" id="iframe-allowance" src="" allowfullscreen></iframe>
 </div>
 
-<!-- <script src="paywall-web.js"></script> -->
-<script>
-// 测试期间临时放行付费墙
-function requirePremium(cb) { cb(); }
-</script>
+<script src="paywall.js"></script>
 <script>
 const DESIRE_INFO = {
   control:{label:'想要控制',cls:'bc'},
@@ -419,14 +414,17 @@ function setAsstBubbleColors() {
 
 window.addEventListener('DOMContentLoaded', function() {
   setAsstBubbleColors();
-  document.querySelectorAll('.asst-orb-wrap').forEach((wrap, i) => {
-    setTimeout(() => wrap.classList.add('visible'), 150 + i * 120);
-  });
-  // 从欲望释放页面返回时，自动重新打开卡点释放输入面板
+  // 从欲望释放页面返回时，直接隐藏三球容器并打开卡点释放面板，
+  // 不触发小球的渐入动画，避免 App 内加载较慢时出现"闪现三球"的现象。
   var params = new URLSearchParams(window.location.search);
   if (params.get('openBlockPoint') === '1') {
     history.replaceState(null, '', window.location.pathname);
-    setTimeout(openBlockPoint, 300);
+    document.getElementById('asst-layer').style.display = 'none';
+    openBlockPoint();
+  } else {
+    document.querySelectorAll('.asst-orb-wrap').forEach((wrap, i) => {
+      setTimeout(() => wrap.classList.add('visible'), 150 + i * 120);
+    });
   }
 });
 
