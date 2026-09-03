@@ -188,7 +188,7 @@ body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',ser
 .back-btn:active { transform: scale(0.96); }
 </style></head>
 <body>
-<button class="back-btn" onclick="window.location.href='web.html?nav=main'">返回</button>
+<button class="back-btn" id="webBackBtn" onclick="window.location.href='web.html?nav=main'">返回</button>
 
 <script>
 (function() {
@@ -453,6 +453,8 @@ function openBeliefs() {
     document.getElementById('panel-beliefs').classList.add('open');
     var orb = document.getElementById('nav-orb-btn');
     if (orb) orb.style.display = 'none';
+    var webBack = document.getElementById('webBackBtn');
+    if (webBack) webBack.style.display = 'none';
   });
 }
 function closeBeliefs() {
@@ -460,6 +462,8 @@ function closeBeliefs() {
   document.getElementById('asst-layer').style.display = 'block';
   var orb = document.getElementById('nav-orb-btn');
   if (orb) orb.style.display = '';
+  var webBack = document.getElementById('webBackBtn');
+  if (webBack) webBack.style.display = '';
 }
 function openAllowance() {
   requirePremium(function() {
@@ -469,6 +473,8 @@ function openAllowance() {
     document.getElementById('panel-allowance').classList.add('open');
     var orb = document.getElementById('nav-orb-btn');
     if (orb) orb.style.display = 'none';
+    var webBack = document.getElementById('webBackBtn');
+    if (webBack) webBack.style.display = 'none';
   });
 }
 function closeAllowance() {
@@ -476,6 +482,8 @@ function closeAllowance() {
   document.getElementById('asst-layer').style.display = 'block';
   var orb = document.getElementById('nav-orb-btn');
   if (orb) orb.style.display = '';
+  var webBack = document.getElementById('webBackBtn');
+  if (webBack) webBack.style.display = '';
 }
 
 // ── Toast ──
