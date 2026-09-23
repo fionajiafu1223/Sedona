@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>推广收益 - Freed</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; min-height:100%;
+  background: linear-gradient(180deg, #c2ecf8 0%, #8ed4ee 30%, #4aaed8 70%, #1a7ab5 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: max(56px, calc(env(safe-area-inset-top, 0px) + 40px)) 16px calc(40px + env(safe-area-inset-bottom, 0px));
+}
+.page h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: #0e3560;
+  letter-spacing: 0.08em;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.page .sub {
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(20,60,110,0.62);
+  margin-bottom: 24px;
+}
+#state-loading, #state-error {
+  text-align: center;
+  color: rgba(20,60,110,0.65);
+  font-size: 0.82rem;
+  padding: 40px 20px;
+}
+.card {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(160,200,235,0.45);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0,60,120,0.08);
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 0.72rem;
+  color: rgba(20,60,110,0.62);
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+.code-box {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.code {
+  font-size: 1.3rem;
+  color: #0e3560;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+.pill {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(74,159,212,0.15);
+  color: #2a7abf;
+  white-space: nowrap;
+}
+.pill.green { background: rgba(58,184,160,0.15); color: #1a8f6f; }
+.pill.grey  { background: rgba(120,140,160,0.15); color: #5a6a7a; }
+.rates {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: #2a4a6a;
+  line-height: 1.7;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.stats .card { margin-bottom: 0; }
+.big {
+  font-size: 1.15rem;
+  color: #0e3560;
+  line-height: 1.5;
+  word-break: break-all;
+}
+.muted { font-size: 0.72rem; color: rgba(20,60,110,0.55); }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.row {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid rgba(160,200,235,0.45);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,60,120,0.08);
+}
+.row-left { display: flex; flex-direction: column; gap: 4px; }
+.row-date { font-size: 0.78rem; color: #2a4a6a; }
+.row-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.row-right { text-align: right; padding-left: 12px; white-space: nowrap; }
+.row-amount { font-size: 1.02rem; color: #0e3560; }
+.section-title {
+  font-size: 0.78rem;
+  color: #0e3560;
+  letter-spacing: 0.06em;
+  margin: 20px 4px 10px;
+}
+.empty {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(20,60,110,0.6);
+  padding: 20px;
+}
+.note {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.85);
+  text-align: center;
+  line-height: 1.7;
+  margin-top: 24px;
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="page">
+  <h1>推广收益</h1>
+  <div class="sub" id="sub">Freed 推广伙伴</div>
+
+  <div id="state-loading">加载中...</div>
+  <div id="state-error" style="display:none;">加载失败，请稍后重试</div>
+
+  <div id="content" style="display:none;">
+    <div class="card">
+      <div class="card-title">你的推广码</div>
+      <div class="code-box">
+        <div class="code" id="code"></div>
+        <span class="pill" id="active-pill"></span>
+      </div>
+      <div class="rates" id="rates"></div>
+    </div>
+
+    <div class="stats">
+      <div class="card">
+        <div class="card-title">带来的订阅</div>
+        <div class="big" id="subs"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">已结算（加币）</div>
+        <div class="big" id="settled"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">待结算</div>
+      <div class="big" id="unsettled"></div>
+      <div class="muted" style="margin-top:6px;">按用户付款币种显示，结算时统一换算为加币</div>
+    </div>
+
+    <div class="section-title">佣金明细</div>
+    <div class="list" id="list"></div>
+
+    <div class="note">此页面为你的专属链接，请勿转发他人</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const WORKER_URL = 'https://api.freedreleasing.com';
+
+  const ORDER_LABELS = { first: '首单', renewal: '续费', one_time: '买断' };
+  const CURRENCY_SYMBOLS = { usd:'$', cad:'$', gbp:'£', aud:'$', nzd:'$', jpy:'¥', krw:'₩', sgd:'$', myr:'RM', hkd:'$', twd:'NT$', cny:'¥' };
+  const ZERO_DECIMAL = ['jpy', 'krw'];
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function formatAmount(amount, currency) {
+    if (amount == null || !currency) return '—';
+    const cur = currency.toLowerCase();
+    const symbol = CURRENCY_SYMBOLS[cur] || '';
+    const value = ZERO_DECIMAL.includes(cur) ? amount : amount / 100;
+    const formatted = ZERO_DECIMAL.includes(cur) ? String(Math.round(value)) : value.toFixed(2);
+    return symbol + formatted + ' ' + cur.toUpperCase();
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+  }
+
+  function pct(r) {
+    return (Math.round(Number(r) * 1000) / 10) + '%';
+  }
+
+  function showError(msg) {
+    document.getElementById('state-loading').style.display = 'none';
+    const el = document.getElementById('state-error');
+    el.textContent = msg || '加载失败，请稍后重试';
+    el.style.display = 'block';
+  }
+
+  function render(d) {
+    document.getElementById('state-loading').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+
+    document.getElementById('sub').textContent = d.influencer_name ? d.influencer_name + '，你好' : 'Freed 推广伙伴';
+    document.getElementById('code').textContent = d.promotion_code || '';
+
+    const pill = document.getElementById('active-pill');
+    pill.textContent = d.active ? '生效中' : '已停用';
+    pill.className = 'pill ' + (d.active ? 'green' : 'grey');
+
+    const ratesEl = document.getElementById('rates');
+    if (Number(d.rate_first_year) === Number(d.rate_lifetime)) {
+      ratesEl.textContent = '佣金比例：' + pct(d.rate_first_year) + '（长期）';
+    } else {
+      ratesEl.innerHTML =
+        '前 ' + esc(d.tier_boundary_months) + ' 个月：' + esc(pct(d.rate_first_year)) + '<br>' +
+        '之后：' + esc(pct(d.rate_lifetime));
+    }
+
+    document.getElementById('subs').textContent = (d.subscriber_count || 0) + ' 个';
+    document.getElementById('settled').textContent = formatAmount(d.settled_total_cad || 0, 'cad');
+
+    const unsettled = d.unsettled_by_currency || {};
+    const keys = Object.keys(unsettled).filter(function(k) { return unsettled[k] > 0; });
+    document.getElementById('unsettled').innerHTML = keys.length
+      ? keys.map(function(k) { return esc(formatAmount(unsettled[k], k)); }).join('<br>')
+      : '0';
+
+    const listEl = document.getElementById('list');
+    const rows = d.commissions || [];
+    if (!rows.length) {
+      listEl.innerHTML = '<div class="empty">还没有佣金记录</div>';
+      return;
+    }
+    listEl.innerHTML = rows.map(function(r) {
+      const typeLabel = ORDER_LABELS[r.order_type] || r.order_type;
+      const status = r.settled
+        ? '<span class="pill green">已结算</span>'
+        : '<span class="pill grey">待结算</span>';
+      return '<div class="row">' +
+        '<div class="row-left">' +
+          '<div class="row-date">' + esc(formatDate(r.created_at)) + '</div>' +
+          '<div class="row-tags">' +
+            '<span class="pill">' + esc(typeLabel) + '</span>' +
+            '<span class="pill">' + esc(pct(r.commission_rate)) + '</span>' +
+            status +
+          '</div>' +
+        '</div>' +
+        '<div class="row-right"><div class="row-amount">' + esc(formatAmount(r.commission_amount, r.currency)) + '</div></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  async function load() {
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) { showError('链接无效'); return; }
+    try {
+      const res = await fetch(WORKER_URL + '/affiliate/stats?token=' + encodeURIComponent(token));
+      if (res.status === 401) { showError('链接无效'); return; }
+      if (!res.ok) { showError(); return; }
+      render(await res.json());
+    } catch (err) {
+      showError();
+    }
+  }
+
+  load();
+})();
+</script>
+
+</body>
+</html>
