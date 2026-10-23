@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Noto+Sans+SC:wght@300;400&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',serif; padding:80px 16px 32px; }
@@ -440,7 +441,7 @@ async function supaFetch(path, opts) {
     if (u && u.token) token = u.token;
     delete opts.useAuth;
   }
-  var res = await fetch(SUPA_URL + path, Object.assign({}, opts, {
+  var res = await (window.freedFetch || fetch)(SUPA_URL + path, Object.assign({}, opts, {
     headers: Object.assign({
       'apikey': SUPA_KEY,
       'Authorization': 'Bearer ' + token,
@@ -681,6 +682,7 @@ async function dropGoal(i) {
   if (!window.supabase) return;
 
   const supa = window.supabase.createClient(SUPA_URL_AUTH, SUPA_KEY_AUTH, {
+    global: { fetch: window.freedFetch || window.fetch.bind(window) },
     auth: {
       persistSession: true,
       autoRefreshToken: true,

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
+<script src="supabase-client.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>欲望释放 · Freed Releasing</title>
@@ -2398,7 +2399,7 @@ function saveMyItems(items) {
 }
 
 async function supaFetch(path, opts = {}) {
-  const res = await fetch(SUPA_URL + path, {
+  const res = await (window.freedFetch || fetch)(SUPA_URL + path, {
     ...opts,
     headers: {
       'apikey': SUPA_KEY,
