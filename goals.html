@@ -1,4 +1,4 @@
-<!-- goals v17 - no migration, cloud only -->
+<!-- goals v18 - checkin + reminder -->
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -201,6 +201,85 @@ body { min-height:100vh; background:transparent; font-family:'Noto Serif SC',ser
 }
 .back-btn:hover { background: rgba(255,255,255,0.68); }
 .back-btn:active { transform: scale(0.96); }
+/* ══ 目标详情弹窗（打卡 + 提醒） ══ */
+.goal-item { cursor:pointer; }
+.goal-meta { font-size:0.7rem; color:#5a7aa0; font-family:'Noto Sans SC',sans-serif; }
+.overlay {
+  position:fixed; inset:0;
+  background:rgba(10,30,60,0.35); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  z-index:100; padding:24px 16px;
+}
+.modal {
+  background:rgba(240,248,255,0.95); border-radius:24px;
+  width:100%; max-width:400px; max-height:90vh;
+  overflow-y:auto; padding:44px 22px 26px;
+  box-shadow:0 12px 48px rgba(0,60,120,0.18);
+  position:relative; border:1px solid rgba(255,255,255,0.9);
+  animation:popIn 0.25s ease;
+}
+@keyframes popIn { from { transform:scale(0.92); opacity:0; } to { transform:scale(1); opacity:1; } }
+.modal-close {
+  position:absolute; top:14px; right:16px;
+  background:rgba(100,160,220,0.1); border:none;
+  width:30px; height:30px; border-radius:50%;
+  font-size:0.9rem; color:#5a7aa0; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.modal-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  background:rgba(74,159,212,0.12); border-radius:10px;
+  padding:3px 10px; font-size:0.68rem; color:#2a6090;
+  font-family:'Noto Sans SC',sans-serif; margin-bottom:8px;
+}
+.modal-goal-text {
+  font-size:0.98rem; color:#0e2840; line-height:1.7; margin-bottom:18px;
+  display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;
+}
+.modal-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.modal-col { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.glass-btn {
+  width:77px; height:77px; border-radius:14px;
+  background:linear-gradient(145deg,rgba(255,255,255,0.45),rgba(255,255,255,0.15));
+  backdrop-filter:blur(24px) saturate(200%); -webkit-backdrop-filter:blur(24px) saturate(200%);
+  border:1px solid rgba(255,255,255,0.7);
+  box-shadow:0 2px 10px rgba(0,60,120,0.08);
+  color:#2a6090; font-size:0.62rem; font-family:'Noto Sans SC',sans-serif;
+  cursor:pointer; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px;
+}
+.glass-btn .btn-icon { font-size:1rem; }
+.glass-btn.done { background:rgba(60,180,100,0.14); border-color:rgba(60,180,100,0.35); color:#2a8050; }
+.action-btn {
+  width:100%; padding:10px; border:none; border-radius:12px;
+  color:#fff; font-size:0.82rem; cursor:pointer; font-family:'Noto Serif SC',serif;
+}
+.btn-release-modal { background:rgba(60,130,220,0.85); }
+.btn-drop-modal    { background:rgba(210,160,20,0.85); }
+.progress-box {
+  width:100%; padding:10px 4px; border-radius:12px;
+  background:rgba(60,130,220,0.12); color:#2a6090;
+  font-size:0.72rem; text-align:center; font-family:'Noto Sans SC',sans-serif;
+}
+.progress-box.complete { background:rgba(60,180,100,0.12); color:#2a8050; }
+.sub-title { font-size:0.8rem; color:#5a7aa0; font-family:'Noto Sans SC',sans-serif; margin-bottom:14px; }
+.sub-hint  { font-size:0.68rem; color:#8aaac0; font-family:'Noto Sans SC',sans-serif; margin-top:10px; }
+.day-chip {
+  padding:7px 14px; border:1.5px solid rgba(100,160,220,0.4); border-radius:99px;
+  background:rgba(240,248,255,0.8); font-size:0.78rem; color:#2a6090;
+  cursor:pointer; font-family:'Noto Sans SC',sans-serif;
+}
+.day-chip.active { background:rgba(60,130,220,0.85); color:#fff; border-color:transparent; }
+.sub-input {
+  flex:1; min-width:0; padding:10px 14px; border:1.5px solid rgba(100,160,220,0.35); border-radius:12px;
+  background:rgba(240,248,255,0.8); font-size:0.95rem; color:#0e2840; outline:none;
+}
+.sub-btn {
+  padding:10px 16px; border:none; border-radius:12px; background:rgba(60,130,220,0.85);
+  color:#fff; font-size:0.82rem; cursor:pointer; font-family:'Noto Sans SC',sans-serif; white-space:nowrap;
+}
+.sub-btn.ghost { background:rgba(220,80,80,0.10); color:rgba(200,60,60,0.85); }
+
 </style>
 </head>
 <body>
@@ -368,6 +447,62 @@ draw();
   <ul class="goals-list" id="goalsList" style="list-style:none;padding:0;"></ul>
 </div>
 
+<!-- 目标详情弹窗 -->
+<div class="overlay" id="modalOverlay" style="display:none;" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-badge" id="modalBadge"></div>
+    <p class="modal-goal-text" id="modalText"></p>
+    <div class="modal-grid">
+      <div class="modal-col">
+        <button class="glass-btn" id="reminderBtn" onclick="openReminder()"><span class="btn-icon">⏰</span><span id="reminderBtnText">设置提醒</span></button>
+        <button class="action-btn btn-release-modal" onclick="releaseGoal(currentGoalIndex)">🫧 释放</button>
+      </div>
+      <div class="modal-col">
+        <button class="glass-btn" onclick="openDays()"><span class="btn-icon">📅</span><span id="daysBtnText">打卡天数</span></button>
+        <button class="action-btn btn-drop-modal" onclick="dropFromModal()">✨ 掉落</button>
+      </div>
+      <div class="modal-col">
+        <button class="glass-btn" id="checkinBtn" onclick="checkinToday()"><span class="btn-icon" id="checkinBtnIcon">🌱</span><span id="checkinBtnText">今日打卡</span></button>
+        <div class="progress-box" id="progressDisplay">未设定天数</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 打卡天数弹窗 -->
+<div class="overlay" id="daysOverlay" style="display:none;" onclick="if(event.target===this)closeDays()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeDays()">✕</button>
+    <div class="sub-title">设定打卡天数</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="day-chip" onclick="selectDays(7,this)">7天</button>
+      <button class="day-chip" onclick="selectDays(21,this)">21天</button>
+      <button class="day-chip" onclick="selectDays(30,this)">30天</button>
+      <button class="day-chip" onclick="selectDays(100,this)">100天</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="customDaysInput" class="sub-input" type="number" min="1" max="365" inputmode="numeric" placeholder="自定义天数">
+      <button class="sub-btn" onclick="saveDays()">确定</button>
+    </div>
+    <div class="sub-hint">每天在目标详情里点「今日打卡」，打满天数即完成</div>
+  </div>
+</div>
+
+<!-- 提醒时间弹窗 -->
+<div class="overlay" id="reminderOverlay" style="display:none;" onclick="if(event.target===this)closeReminder()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeReminder()">✕</button>
+    <div class="sub-title">每日提醒时间</div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input id="reminderTimeInput" class="sub-input" type="time" value="21:00">
+      <button class="sub-btn" onclick="saveReminder()">保存</button>
+    </div>
+    <div style="margin-top:12px;" id="reminderOffRow"><button class="sub-btn ghost" onclick="clearReminder()">关闭提醒</button></div>
+    <div class="sub-hint">每天这个时间提醒你为这个目标释放打卡</div>
+  </div>
+</div>
+
 <script>
 const CAT_ICONS = {'健康':'🌿','财富':'💰','SP':'💞','人际关系':'🤝','学业':'📚','工作':'💼','其他':'✨'};
 const SUPA_URL  = 'https://ryoaxziysgdkjcjiuqti.supabase.co';
@@ -467,7 +602,8 @@ async function loadGoalsFromCloud() {
   if (!rows) return null;
   // 转成本地格式
   return rows.map(function(r) {
-    return { id: r.id, text: r.text, cat: r.cat || '其他', ts: r.ts };
+    return { id: r.id, text: r.text, cat: r.cat || '其他', ts: r.ts,
+             reminder_time: r.reminder_time || null, target_days: r.target_days || null, plan_start: r.plan_start || null };
   });
 }
 
@@ -514,10 +650,12 @@ function renderGoals() {
   }
   list.innerHTML = goals.map(function(g, i) {
     var icon = CAT_ICONS[g.cat] || '✨';
-    return '<li class="goal-item" id="goal-item-' + i + '">' +
+    var meta = goalMetaText(g);
+    return '<li class="goal-item" id="goal-item-' + i + '" onclick="openModal(' + i + ')">' +
       '<span class="gain-badge">' + icon + ' ' + escapeHtml(g.cat || '') + '</span>' +
       '<p class="goal-item-text">' + escapeHtml(g.text) + '</p>' +
-      '<div class="goal-item-actions">' +
+      (meta ? '<div class="goal-meta">' + meta + '</div>' : '') +
+      '<div class="goal-item-actions" onclick="event.stopPropagation()">' +
       '<button class="goal-btn-release" onclick="releaseGoal(' + i + ')">🫧 释放</button>' +
       '<button class="goal-btn-drop" onclick="dropGoal(' + i + ')">✨ 掉落</button>' +
       '<button class="goal-btn-del" onclick="deleteGoal(' + i + ')">✕</button>' +
@@ -579,8 +717,9 @@ async function deleteGoal(i) {
   if (!goal) return;
 
   var u = readGoalsUserFromStorage();
+  if (goal.id) cancelGoalReminder(goal.id);
   if (u && goal.id) {
-    // 登录用户：删云端
+    // 登录用户：删云端（打卡记录随目标一起删除）
     await deleteGoalFromCloud(goal.id);
   }
   // 不论登录与否，本地都删
@@ -631,6 +770,7 @@ async function dropGoal(i) {
   } catch(_) {}
 
   // 删除这个目标（登录则删云端，本地都删）
+  if (goal.id) cancelGoalReminder(goal.id);
   if (u && goal.id) {
     try { await deleteGoalFromCloud(goal.id); } catch(_) {}
   }
@@ -638,6 +778,229 @@ async function dropGoal(i) {
   saveGoals(goals);
   renderGoals();
   showToast('✨ 目标已掉落并记录到收获本');
+}
+
+
+// ════════════════════════════════════════
+// 打卡 + 定时提醒
+// ════════════════════════════════════════
+var currentGoalIndex = -1;
+var CHECKINS = {};   // { goalId: { 'YYYY-MM-DD': true } }
+
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+async function loadCheckins() {
+  var u = readGoalsUserFromStorage();
+  if (!u) return;
+  var rows = await supaFetch('/rest/v1/goal_checkins?user_id=eq.' + u.id + '&select=goal_id,checkin_date&limit=10000', { useAuth: true });
+  if (!Array.isArray(rows)) return;
+  CHECKINS = {};
+  rows.forEach(function(r) {
+    if (!CHECKINS[r.goal_id]) CHECKINS[r.goal_id] = {};
+    CHECKINS[r.goal_id][r.checkin_date] = true;
+  });
+}
+function checkedToday(g) { return !!(g && g.id && CHECKINS[g.id] && CHECKINS[g.id][todayStr()]); }
+function checkinCount(g) {
+  if (!g || !g.id || !CHECKINS[g.id]) return 0;
+  var start = g.plan_start || '';
+  return Object.keys(CHECKINS[g.id]).filter(function(d) { return d >= start; }).length;
+}
+function goalMetaText(g) {
+  var parts = [];
+  if (g.reminder_time) parts.push('⏰ ' + g.reminder_time);
+  var n = checkinCount(g);
+  if (g.target_days) parts.push(n >= g.target_days ? '🎉 已完成 ' + g.target_days + ' 天' : '已打卡 ' + n + ' / ' + g.target_days + ' 天');
+  else if (n > 0) parts.push('已打卡 ' + n + ' 天');
+  if (checkedToday(g)) parts.push('今日已打卡 ✓');
+  return parts.join(' · ');
+}
+async function patchGoal(g, fields) {
+  if (!g.id) return false;
+  var rows = await supaFetch('/rest/v1/user_goals?id=eq.' + encodeURIComponent(g.id), {
+    method: 'PATCH', body: JSON.stringify(fields), useAuth: true
+  });
+  if (!Array.isArray(rows) || !rows.length) return false;
+  var goals = getGoals();
+  goals.forEach(function(x) { if (x.id === g.id) Object.assign(x, fields); });
+  saveGoals(goals);
+  return true;
+}
+function currentGoal() { return getGoals()[currentGoalIndex]; }
+function needCloud(g) {
+  if (g && g.id && readGoalsUserFromStorage()) return true;
+  showToast('请先登录后再使用打卡和提醒');
+  return false;
+}
+
+// ── 详情弹窗 ──
+function openModal(i) {
+  var g = getGoals()[i];
+  if (!g) return;
+  currentGoalIndex = i;
+  document.getElementById('modalBadge').textContent = (CAT_ICONS[g.cat] || '✨') + ' ' + (g.cat || '');
+  document.getElementById('modalText').textContent = g.text;
+  refreshModal();
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+function refreshModal() {
+  var g = currentGoal();
+  if (!g) return;
+  document.getElementById('reminderBtnText').textContent = g.reminder_time ? '每天 ' + g.reminder_time : '设置提醒';
+  document.getElementById('daysBtnText').textContent = g.target_days ? g.target_days + '天' : '打卡天数';
+  var done = checkedToday(g);
+  document.getElementById('checkinBtn').classList.toggle('done', done);
+  document.getElementById('checkinBtnIcon').textContent = done ? '✅' : '🌱';
+  document.getElementById('checkinBtnText').textContent = done ? '今日已打卡' : '今日打卡';
+  var n = checkinCount(g), el = document.getElementById('progressDisplay');
+  el.classList.remove('complete');
+  if (g.target_days) {
+    if (n >= g.target_days) { el.textContent = '🎉 已完成 ' + g.target_days + ' 天'; el.classList.add('complete'); }
+    else el.textContent = '已打卡 ' + n + ' / ' + g.target_days + ' 天';
+  } else {
+    el.textContent = n > 0 ? '已打卡 ' + n + ' 天' : '未设定天数';
+  }
+}
+function dropFromModal() { var i = currentGoalIndex; closeModal(); dropGoal(i); }
+
+// ── 今日打卡 ──
+var checkinBusy = false;
+async function checkinToday() {
+  var g = currentGoal();
+  if (!needCloud(g)) return;
+  if (checkedToday(g)) { showToast('今天已经打过卡了 🌱'); return; }
+  if (checkinBusy) return;
+  checkinBusy = true;
+  var u = readGoalsUserFromStorage();
+  var day = todayStr();
+  var rows = await supaFetch('/rest/v1/goal_checkins', {
+    method: 'POST', body: JSON.stringify({ goal_id: g.id, user_id: u.id, checkin_date: day }), useAuth: true
+  });
+  if (!Array.isArray(rows)) { await loadCheckins(); }   // 可能是重复打卡，重新读一次
+  else { if (!CHECKINS[g.id]) CHECKINS[g.id] = {}; CHECKINS[g.id][day] = true; }
+  checkinBusy = false;
+  if (!checkedToday(g)) { showToast('打卡失败，请检查网络后重试'); return; }
+  refreshModal(); renderGoals();
+  var n = checkinCount(g);
+  showToast(g.target_days && n >= g.target_days ? '🎉 恭喜完成 ' + g.target_days + ' 天打卡！' : '🌱 打卡成功');
+}
+
+// ── 打卡天数 ──
+function openDays() {
+  var g = currentGoal();
+  if (!needCloud(g)) return;
+  document.getElementById('customDaysInput').value = g.target_days || '';
+  document.querySelectorAll('#daysOverlay .day-chip').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.textContent) === g.target_days);
+  });
+  document.getElementById('daysOverlay').style.display = 'flex';
+}
+function closeDays() { document.getElementById('daysOverlay').style.display = 'none'; }
+function selectDays(n, btn) {
+  document.getElementById('customDaysInput').value = n;
+  document.querySelectorAll('#daysOverlay .day-chip').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+async function saveDays() {
+  var g = currentGoal();
+  var val = parseInt(document.getElementById('customDaysInput').value);
+  if (!g || !val || val <= 0 || val > 365) { showToast('请输入 1–365 天'); return; }
+  // 进行中的计划保留开始日期；没有计划或已完成则从今天重新开始
+  var keepStart = g.plan_start && !(g.target_days && checkinCount(g) >= g.target_days);
+  var ok = await patchGoal(g, { target_days: val, plan_start: keepStart ? g.plan_start : todayStr() });
+  if (!ok) { showToast('保存失败，请检查网络后重试'); return; }
+  closeDays(); refreshModal(); renderGoals();
+}
+
+// ── 提醒时间 ──
+function isNativeApp() {
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()
+    && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications);
+}
+function reminderIdFor(goalId) {
+  var h = 0;
+  for (var i = 0; i < goalId.length; i++) { h = (h * 31 + goalId.charCodeAt(i)) | 0; }
+  return 100000 + (Math.abs(h) % 800000);   // 避开 1001 / 1002
+}
+function openReminder() {
+  var g = currentGoal();
+  if (!needCloud(g)) return;
+  document.getElementById('reminderTimeInput').value = g.reminder_time || '21:00';
+  document.getElementById('reminderOffRow').style.display = g.reminder_time ? 'block' : 'none';
+  document.getElementById('reminderOverlay').style.display = 'flex';
+}
+function closeReminder() { document.getElementById('reminderOverlay').style.display = 'none'; }
+async function saveReminder() {
+  var g = currentGoal();
+  var val = document.getElementById('reminderTimeInput').value;
+  if (!g || !/^\d{2}:\d{2}$/.test(val)) return;
+  if (isNativeApp()) {
+    var granted = await ensureNotifyPermission();
+    if (!granted) { showToast('请先在系统设置里允许 Freed 发送通知'); return; }
+  }
+  var ok = await patchGoal(g, { reminder_time: val });
+  if (!ok) { showToast('保存失败，请检查网络后重试'); return; }
+  await scheduleGoalReminder(currentGoal());
+  closeReminder(); refreshModal(); renderGoals();
+  showToast(isNativeApp() ? '⏰ 每天 ' + val + ' 提醒你' : '已保存，提醒会在 App 里推送');
+}
+async function clearReminder() {
+  var g = currentGoal();
+  if (!g) return;
+  var ok = await patchGoal(g, { reminder_time: null });
+  if (!ok) { showToast('保存失败，请检查网络后重试'); return; }
+  cancelGoalReminder(g.id);
+  closeReminder(); refreshModal(); renderGoals();
+  showToast('已关闭提醒');
+}
+async function ensureNotifyPermission() {
+  try {
+    var LN = window.Capacitor.Plugins.LocalNotifications;
+    var p = await LN.checkPermissions();
+    if (p.display === 'granted') return true;
+    p = await LN.requestPermissions();
+    return p.display === 'granted';
+  } catch(_) { return false; }
+}
+async function scheduleGoalReminder(g) {
+  if (!isNativeApp() || !g || !g.id || !g.reminder_time) return;
+  var LN = window.Capacitor.Plugins.LocalNotifications;
+  var hm = g.reminder_time.split(':');
+  var id = reminderIdFor(g.id);
+  var text = g.text.length > 30 ? g.text.slice(0, 30) + '…' : g.text;
+  try {
+    await LN.cancel({ notifications: [{ id: id }] });
+    await LN.schedule({ notifications: [{
+      id: id,
+      title: '释放打卡时间到了',
+      body: '今天为「' + text + '」释放了吗？',
+      schedule: { on: { hour: parseInt(hm[0], 10), minute: parseInt(hm[1], 10) }, repeats: true, allowWhileIdle: true },
+      extra: { type: 'goal-reminder', goalId: g.id }
+    }] });
+  } catch(e) { console.warn('schedule reminder failed', e); }
+}
+function cancelGoalReminder(goalId) {
+  if (!isNativeApp() || !goalId) return;
+  try { window.Capacitor.Plugins.LocalNotifications.cancel({ notifications: [{ id: reminderIdFor(goalId) }] }); } catch(_) {}
+}
+// 每次进目标表：清掉已删除目标的提醒，补上换设备后缺的提醒
+async function syncAllReminders() {
+  if (!isNativeApp() || !readGoalsUserFromStorage()) return;
+  var LN = window.Capacitor.Plugins.LocalNotifications;
+  try {
+    var pending = await LN.getPending();
+    var stale = (pending.notifications || []).filter(function(n) { return n.id >= 100000 && n.id < 900000; })
+      .map(function(n) { return { id: n.id }; });
+    if (stale.length) await LN.cancel({ notifications: stale });
+    var goals = getGoals().filter(function(g) { return g.id && g.reminder_time; });
+    if (!goals.length) return;
+    var p = await LN.checkPermissions();
+    if (p.display !== 'granted') return;
+    for (var i = 0; i < goals.length; i++) await scheduleGoalReminder(goals[i]);
+  } catch(e) { console.warn('sync reminders failed', e); }
 }
 
 // ════════════════════════════════════════
@@ -649,9 +1012,20 @@ async function dropGoal(i) {
     // 登录用户：直接拉云端，覆盖本地（登录前的本地目标会被丢弃）
     var cloudGoals = await loadGoalsFromCloud();
     saveGoals(cloudGoals || []);
+    await loadCheckins();
   }
   // 渲染（登录用户用云端，未登录用本地）
   renderGoals();
+  syncAllReminders();
+  // 从提醒推送点进来：goals.html?goal=<id> 直接打开该目标
+  try {
+    var gid = new URLSearchParams(location.search).get('goal');
+    if (gid) {
+      var idx = getGoals().findIndex(function(g) { return g.id === gid; });
+      if (idx >= 0) openModal(idx);
+      history.replaceState(null, '', location.pathname);
+    }
+  } catch(_) {}
 })();
 </script>
 
