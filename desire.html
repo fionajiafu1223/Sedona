@@ -960,16 +960,54 @@
     width: min(88vw, 480px); max-height: 50vh; overflow-y: auto;
   }
   .active-goal-banner.show { opacity: 1; }
-  .active-goal-label {
-    font-size: 0.58rem; color: rgba(200,230,255,0.75);
-    font-family: 'Noto Sans SC', sans-serif; letter-spacing: 0.08em;
+  /* ── 步骤释放模式 ── */
+  .step-guide {
+    display:none; margin-top:6px; pointer-events:auto;
+    font-family:'Noto Serif SC', serif; font-size:0.88rem; line-height:1.65;
+    color:rgba(240,250,255,0.92); text-align:center; letter-spacing:0.04em;
+    text-shadow:0 1px 6px rgba(0,40,100,0.35);
   }
+  .active-goal-banner.steps-mode .step-guide { display:block; }
+  .step-guide-more {
+    display:inline-block; margin-left:6px; padding:1px 8px; border-radius:99px;
+    font-size:0.68rem; color:rgba(255,255,255,0.8); background:rgba(255,255,255,0.16);
+    cursor:pointer; white-space:nowrap;
+  }
+  .step-nav { display:none; gap:8px; margin-top:6px; pointer-events:auto; }
+  .active-goal-banner.steps-mode .step-nav { display:flex; }
+  .step-nav button {
+    border:none; border-radius:99px; padding:6px 16px; cursor:pointer;
+    font-family:'Noto Serif SC', serif; font-size:0.72rem; letter-spacing:0.08em;
+    background:rgba(255,255,255,0.9); color:#1a3a66; font-weight:600;
+  }
+  .step-nav button.ghost { background:rgba(255,255,255,0.22); color:#fff; font-weight:400; }
+  .step-nav button:disabled { opacity:0.35; }
+  .steps-done {
+    position:fixed; inset:0; z-index:60; display:none;
+    align-items:center; justify-content:center; background:rgba(10,40,80,0.35);
+  }
+  .steps-done.show { display:flex; }
+  .steps-done-card {
+    width:min(84vw, 360px); padding:26px 22px; border-radius:22px; text-align:center;
+    background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,0.4); color:#fff;
+    font-family:'Noto Serif SC', serif;
+  }
+  .steps-done-card h3 { font-weight:400; font-size:1.05rem; letter-spacing:0.12em; margin-bottom:10px; }
+  .steps-done-card p { font-size:0.76rem; line-height:1.7; opacity:0.85; margin-bottom:18px; }
+  .steps-done-card button {
+    display:block; width:100%; margin-top:8px; border:none; border-radius:99px; padding:11px 0;
+    font-family:'Noto Serif SC', serif; font-size:0.82rem; cursor:pointer;
+    background:rgba(255,255,255,0.92); color:#1a3a66; font-weight:600;
+  }
+  .steps-done-card button.ghost { background:rgba(255,255,255,0.2); color:#fff; font-weight:400; }
+  .active-goal-label { display: none; }
   .active-goal-text {
     background: rgba(255,255,255,0.18); backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 16px; padding: 8px 18px;
-    font-family: 'Noto Serif SC', serif; font-size: 0.82rem;
-    color: rgba(255,255,255,0.92); letter-spacing: 0.06em;
+    border-radius: 16px; padding: 10px 20px;
+    font-family: 'Noto Serif SC', serif; font-size: 0.96rem;
+    color: rgba(255,255,255,0.95); letter-spacing: 0.06em;
     text-shadow: 0 1px 6px rgba(0,40,100,0.3);
     width: 100%; text-align: center;
     white-space: normal; word-break: break-all; line-height: 1.5;
@@ -1139,6 +1177,23 @@
 <div class="active-goal-banner" id="activeGoalBanner">
   <span class="active-goal-label">当前正在释放的目标</span>
   <span class="active-goal-text" id="activeGoalText"></span>
+  <div class="step-counter-row" id="stepCounterRow" style="display:none;font-size:0.72rem;color:rgba(210,240,255,0.75);letter-spacing:0.06em;margin-top:4px;"></div>
+  <div class="step-current-text" id="stepCurrentText" style="display:none;font-family:'Noto Serif SC',serif;font-size:0.88rem;color:rgba(255,255,255,0.95);text-align:center;margin-top:2px;letter-spacing:0.04em;"></div>
+  <div class="step-guide"><span id="stepGuideText"></span><span class="step-guide-more" onclick="nextGuide()">换个问法 ↻</span></div>
+  <div class="step-nav">
+    <button class="ghost" id="stepPrevBtn" onclick="stepGo(-1)">‹ 上一步</button>
+    <button id="stepNextBtn" onclick="stepGo(1)">下一步 ›</button>
+  </div>
+</div>
+
+<!-- 步骤释放：全部完成 -->
+<div class="steps-done" id="stepsDone">
+  <div class="steps-done-card">
+    <h3>所有步骤都释放过了</h3>
+    <p>每一步里的欲望都看见过、放下过<br>现在可以轻松地去做了</p>
+    <button onclick="location.href='steps.html'">回到步骤</button>
+    <button class="ghost" onclick="document.getElementById('stepsDone').classList.remove('show')">继续释放</button>
+  </div>
 </div>
 
 <!-- Release Queue Guidance (gentle question above decision buttons) -->
@@ -2154,11 +2209,9 @@ function handleDecision(allow) {
     setTimeout(() => mEl.remove(), 2100);
     released += atSurface.length;
     document.getElementById('counter').textContent = tf('counter', released);
-    showToast(t('toast_allow'));
   } else {
     mEl.classList.add('go-sky');
     setTimeout(() => mEl.remove(), 2100);
-    showToast(t('toast_deny'));
   }
 
   for (const e of atSurface) {
@@ -3751,6 +3804,70 @@ function discardRecording() {
 // ═══════════════════════════════════════════════════
 //  AUTO-START FROM ASSISTANT / GOALS
 // ═══════════════════════════════════════════════════
+// ── 步骤释放模式（来自 steps.html）──
+var stepsData = null;
+function initStepsMode() {
+  var raw = sessionStorage.getItem('releaseSteps');
+  if (!raw) return false;
+  try { stepsData = JSON.parse(raw); } catch(_) { stepsData = null; }
+  if (!stepsData || !stepsData.steps || !stepsData.steps.length) {
+    sessionStorage.removeItem('releaseSteps'); stepsData = null; return false;
+  }
+  if (!(stepsData.idx >= 0 && stepsData.idx < stepsData.steps.length)) stepsData.idx = 0;
+  document.getElementById('activeGoalBanner').classList.add('show', 'steps-mode');
+  renderStep();
+  return true;
+}
+var STEP_GUIDES = [
+  '当你准备去「{s}」的时候，心里升起了什么欲望？',
+  '想象你正在「{s}」，此刻你最想要的是什么？',
+  '如果「{s}」进行得不顺利，你最担心什么？那份担心背后，你想要的是什么？',
+  '「{s}」完成之后，你希望别人怎么看你？',
+  '在「{s}」这件事上，你想控制哪些结果？',
+  '「{s}」这一步里，有没有哪个部分让你觉得不安全、想要抓紧？'
+];
+var guideIdx = 0;
+function renderGuide() {
+  var step = stepsData.steps[stepsData.idx];
+  document.getElementById('stepGuideText').textContent = STEP_GUIDES[guideIdx].replace('{s}', step);
+}
+function nextGuide() {
+  if (!stepsData) return;
+  guideIdx = (guideIdx + 1) % STEP_GUIDES.length;
+  renderGuide();
+}
+function renderStep() {
+  guideIdx = 0;
+  var n = stepsData.steps.length, i = stepsData.idx;
+  // 框里放目标文字
+  document.getElementById('activeGoalText').textContent = stepsData.goal || '';
+  // 步骤计数
+  var counterEl = document.getElementById('stepCounterRow');
+  if (counterEl) { counterEl.style.display = 'none'; }
+  // 当前步骤文字
+  var stepTextEl = document.getElementById('stepCurrentText');
+  if (stepTextEl) { stepTextEl.style.display = 'none'; }
+  renderGuide();
+  if (typeof activeGoalText !== 'undefined') activeGoalText = stepsData.steps[i];
+  document.getElementById('stepPrevBtn').disabled = i === 0;
+  document.getElementById('stepNextBtn').textContent = i === n - 1 ? '完成 ✓' : '下一步 ›';
+  try { sessionStorage.setItem('releaseSteps', JSON.stringify(stepsData)); } catch(_) {}
+}
+function stepGo(d) {
+  if (!stepsData) return;
+  var n = stepsData.steps.length;
+  if (d > 0 && stepsData.idx === n - 1) {
+    sessionStorage.removeItem('releaseSteps');
+    stepsData = null;
+    var b = document.getElementById('activeGoalBanner');
+    b.classList.remove('show', 'steps-mode');
+    document.getElementById('stepsDone').classList.add('show');
+    return;
+  }
+  stepsData.idx = Math.max(0, Math.min(n - 1, stepsData.idx + d));
+  renderStep();
+}
+
 window.addEventListener('load', function() {
   setTimeout(function() {
     try {
@@ -3766,6 +3883,8 @@ window.addEventListener('load', function() {
           return;
         }
       }
+      // From steps.html: step-by-step release
+      if (initStepsMode()) return;
       // From goals: single goal text to display
       var goalText = sessionStorage.getItem('releaseGoalText');
       if (goalText) {
