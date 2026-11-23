@@ -81,6 +81,12 @@
     color: #fff;
     text-decoration: underline;
   }
+  .card[data-l] { display: none; }
+  body[data-lang="zh"] .card[data-l="zh"], body[data-lang="zh-TW"] .card[data-l="zh-TW"], body[data-lang="en"] .card[data-l="en"] { display: block; }
+  body { flex-direction: column; }
+  .lang { align-self: center; margin-bottom: 14px; font-size: 13px; }
+  .lang button { background: none; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.75); border-radius: 999px; padding: 4px 12px; margin: 0 3px; cursor: pointer; }
+  .lang button.on { border-color: #fff; color: #fff; background: rgba(255,255,255,0.15); }
   .footer {
     margin-top: 28px;
     font-size: 0.75rem;
@@ -89,26 +95,27 @@
   }
 </style>
 </head>
-<body>
-  <div class="card">
+<body data-lang="zh">
+  <span class="lang"><button id="b-zh" class="on" onclick="setL('zh')">简体</button><button id="b-zh-TW" onclick="setL('zh-TW')">繁體</button><button id="b-en" onclick="setL('en')">EN</button></span>
+  <div class="card" data-l="zh">
     <h1>删除账号与数据</h1>
     <p class="subtitle">Freed 释放 (com.freedreleasing.app)</p>
 
     <div class="step">
       <div class="step-num">1</div>
-      <div class="step-text">打开 <strong>Freed 释放</strong> App，使用您的账号登录</div>
+      <div class="step-text">打开 <strong>Freed 释放</strong> App，使用你的账号登录</div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
-      <div class="step-text">在首页点击左上角头像图标，进入「账号设置」</div>
+      <div class="step-text">点击首页右上角的账号按钮（人像图标）</div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <div class="step-text">找到「删除账号」选项，按提示确认删除</div>
+      <div class="step-text">在弹出的菜单里选「删除账号」，按提示确认</div>
     </div>
     <div class="step">
       <div class="step-num">4</div>
-      <div class="step-text">删除成功后，您的账号信息将立即从系统中移除</div>
+      <div class="step-text">删除成功后，你的账号信息会立即从系统中移除</div>
     </div>
 
     <div class="divider"></div>
@@ -119,12 +126,91 @@
     <div class="divider"></div>
 
     <div class="note-title">无法登录 App？</div>
-    <div class="note-text">如果您无法访问 App 或遇到任何问题，请发送邮件至
-      <a href="mailto:fionajiafu1223@gmail.com">fionajiafu1223@gmail.com</a>，
-      说明您的账号邮箱，我们将在 7 个工作日内为您处理删除请求。
-    </div>
+    <div class="note-text">如果你无法访问 App 或遇到任何问题，请发送邮件至 <a href="mailto:info@freedreleasing.com">info@freedreleasing.com</a>，写明你的账号邮箱，我们会在 7 个工作日内为你处理删除请求。</div>
 
     <div class="footer">Freed 释放 · 隐私与数据管理</div>
   </div>
+  <div class="card" data-l="zh-TW">
+    <h1>刪除帳號與資料</h1>
+    <p class="subtitle">Freed 釋放 (com.freedreleasing.app)</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">打開 <strong>Freed 釋放</strong> App，使用你的帳號登入</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">點選首頁右上角的帳號按鈕（人像圖示）</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">在彈出的選單裡選「刪除帳號」，依提示確認</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">刪除成功後，你的帳號資訊會立即從系統中移除</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="note-title">刪除內容說明</div>
+    <div class="note-text">刪除帳號後，以下資料將被永久刪除，且無法復原：帳號資訊（電子郵件、登入憑證）、目標表與收穫本記錄、訂閱狀態資訊、應用內的個人使用資料。</div>
+
+    <div class="divider"></div>
+
+    <div class="note-title">無法登入 App？</div>
+    <div class="note-text">如果你無法使用 App 或遇到任何問題，請寄信至 <a href="mailto:info@freedreleasing.com">info@freedreleasing.com</a>，寫明你的帳號電子郵件，我們會在 7 個工作天內為你處理刪除請求。</div>
+
+    <div class="footer">Freed 釋放 · 隱私與資料管理</div>
+  </div>
+  <div class="card" data-l="en">
+    <h1>Delete your account and data</h1>
+    <p class="subtitle">Freed Releasing (com.freedreleasing.app)</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-text">Open the <strong>Freed</strong> app and log in to your account</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-text">Tap the account button (person icon) in the top-right corner of the home screen</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-text">Choose <strong>Delete account</strong> from the menu and confirm</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-text">Once deleted, your account information is removed from our system immediately</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="note-title">What gets deleted</div>
+    <div class="note-text">Deleting your account permanently removes the following data, which cannot be recovered: account information (email and login credentials), your Goals and Gains Journal entries, subscription status, and your personal in-app usage data.</div>
+
+    <div class="divider"></div>
+
+    <div class="note-title">Can’t log in to the app?</div>
+    <div class="note-text">If you can’t access the app or run into any problem, email <a href="mailto:info@freedreleasing.com">info@freedreleasing.com</a> with your account email address, and we will process your deletion request within 7 business days.</div>
+
+    <div class="footer">Freed Releasing · Privacy &amp; Data</div>
+  </div>
+<script>
+// 语言：链接带 ?lang=en / ?lang=zh-TW 优先，其次按浏览器语言，默认简体
+function setL(l){
+  document.body.setAttribute('data-lang', l);
+  document.documentElement.lang = l === 'zh' ? 'zh-CN' : l;
+  ['zh','zh-TW','en'].forEach(function(k){ document.getElementById('b-'+k).classList.toggle('on', k===l); });
+  document.title = { zh:'删除账号 - Freed 释放', 'zh-TW':'刪除帳號 - Freed 釋放', en:'Delete Account - Freed Releasing' }[l];
+}
+(function(){
+  var m = /[?&]lang=([\w-]+)/.exec(location.search), q = m ? m[1].toLowerCase() : '';
+  var nav = (navigator.language || '').toLowerCase(), l = 'zh';
+  if (q === 'en') l = 'en'; else if (q === 'zh-tw') l = 'zh-TW'; else if (q === 'zh') l = 'zh';
+  else if (/^en/.test(nav)) l = 'en'; else if (/^zh-(tw|hk|mo|hant)/.test(nav)) l = 'zh-TW';
+  setL(l);
+})();
+</script>
 </body>
 </html>
